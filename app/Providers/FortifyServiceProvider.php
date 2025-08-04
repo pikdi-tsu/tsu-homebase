@@ -49,7 +49,7 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LoginResponse::class, function ($app) {
             return new class implements LoginResponse {
                 public function toResponse($request) {
-                    if (auth()->user()->hasRole('admin')) {
+                    if (auth()->user()->hasRole('admin|super-admin')) {
                         return redirect()->intended('/admin');
                     }
                     return redirect()->intended(config('fortify.home'));

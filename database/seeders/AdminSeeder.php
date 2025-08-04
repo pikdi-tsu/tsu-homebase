@@ -8,7 +8,7 @@ use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Spatie\Permission\Models\Role;
 
-class SuperAdminSeeder extends Seeder
+class AdminSeeder extends Seeder
 {
     /**
      * Run the database seeds.
@@ -16,7 +16,8 @@ class SuperAdminSeeder extends Seeder
     public function run(): void
     {
         // Buat role 'admin' jika belum ada
-        $adminRole = Role::firstOrCreate(['name' => 'super admin']);
+        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
+        $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
         // Buat user super admin jika belum ada
         $superAdmin = User::firstOrCreate([
@@ -25,7 +26,14 @@ class SuperAdminSeeder extends Seeder
                 'password' => Hash::make('superadmin'), // Ganti dengan password yang aman
             ]);
 
+        $admin = User::firstOrCreate([
+                'name' => 'Admin',
+                'email' => 'admin@tsu.ac.id', // Email untuk login
+                'password' => Hash::make('admin123'), // Ganti dengan password yang aman
+            ]);
+
         // Berikan role 'admin' ke user tersebut
-        $superAdmin->assignRole($adminRole);
+        $superAdmin->assignRole($superAdminRole);
+        $admin->assignRole($adminRole);
     }
 }
