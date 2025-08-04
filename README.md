@@ -1,4 +1,3 @@
-# TSU Homebase Module
 
 ## 🚀 Tentang Proyek Ini
 
@@ -29,28 +28,28 @@ Pilih salah satu metode di bawah ini sesuai dengan preferensi dan konfigurasimu.
 
 - Opsi 1: HTTPS
 
-	Gunakan metode ini jika ingin menggunakan username dan password (atau Personal Access Token) untuk otentikasi.
-	
-	```Bash
-	git clone https://github.com/AncaSea/tsu-homebase.git
-	```
+  Gunakan metode ini jika ingin menggunakan username dan password (atau Personal Access Token) untuk otentikasi.
+
+  ```Bash
+  git clone https://github.com/AncaSea/tsu-homebase.git
+  ```
 
 - Opsi 2: SSH
 
-	Gunakan metode ini jika sudah mengatur SSH key di akun Git-mu.
-	
-	```Bash
-	git clone git@github.com:your_username/tsu-homebase.git
-	```
+  Gunakan metode ini jika sudah mengatur SSH key di akun Git-mu.
+
+  ```Bash
+  git clone git@github.com:your_username/tsu-homebase.git
+  ```
 
 - Opsi 3: Personal Access Token (PAT)
 
-	Jika menggunakan Two-Factor Authentication (2FA) atau organisasi mewajibkan PAT.
-	
-	```Bash
-	git clone https://your_PAT@github.com/username/AncaSea/tsu-homebase.git
-	```
- 
+  Jika menggunakan Two-Factor Authentication (2FA) atau organisasi mewajibkan PAT.
+
+  ```Bash
+  git clone https://your_PAT@github.com/username/AncaSea/tsu-homebase.git
+  ```
+
 </details>
 
 2. Masuk ke direktori proyek:
@@ -66,6 +65,13 @@ composer install
 npm install
 ```
 
+4. Jalankan npm run build&dev:
+
+```bash
+npm run build
+npm run dev
+```
+
 4. Salin file .env.example menjadi .env:
 
 ```Bash
@@ -78,9 +84,9 @@ cp .env.example .env
 php artisan key:generate
 ```
 
-6. Konfigurasi database di file .env 
- 
-	 >Disarankan menggunakan **postgresql**
+6. Konfigurasi database di file .env
+
+   >Disarankan menggunakan **postgresql**
 
 7. Jalankan migrasi database:
 
