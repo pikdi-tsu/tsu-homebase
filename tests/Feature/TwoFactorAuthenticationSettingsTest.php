@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\UserDosenTendik;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Laravel\Fortify\Features;
 use Laravel\Jetstream\Http\Livewire\TwoFactorAuthenticationForm;
@@ -19,7 +19,7 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
             $this->markTestSkipped('Two factor authentication is not enabled.');
         }
 
-        $this->actingAs($user = User::factory()->create());
+        $this->actingAs($user = UserDosenTendik::factory()->create());
 
         $this->withSession(['auth.password_confirmed_at' => time()]);
 
@@ -38,7 +38,7 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
             $this->markTestSkipped('Two factor authentication is not enabled.');
         }
 
-        $this->actingAs($user = User::factory()->create());
+        $this->actingAs($user = UserDosenTendik::factory()->create());
 
         $this->withSession(['auth.password_confirmed_at' => time()]);
 
@@ -60,7 +60,7 @@ class TwoFactorAuthenticationSettingsTest extends TestCase
             $this->markTestSkipped('Two factor authentication is not enabled.');
         }
 
-        $this->actingAs($user = User::factory()->create());
+        $this->actingAs($user = UserDosenTendik::factory()->create());
 
         $this->withSession(['auth.password_confirmed_at' => time()]);
 

@@ -11,7 +11,7 @@ use Laravel\Jetstream\HasProfilePhoto;
 use Laravel\Sanctum\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class User extends Authenticatable
+class UserDosenTendik extends Authenticatable
 {
     use HasApiTokens;
 
@@ -28,8 +28,15 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $fillable = [
+        'nik',
         'name',
         'email',
+        'password',
+        'q1',
+        'a1',
+        'q2',
+        'a2',
+        'password',
         'password',
     ];
 
@@ -51,7 +58,7 @@ class User extends Authenticatable
      * @var array<int, string>
      */
     protected $appends = [
-        'profile_photo_url',
+//        'profile_photo_url',
     ];
 
     /**

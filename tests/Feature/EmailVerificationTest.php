@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\User;
+use App\Models\UserDosenTendik;
 use Illuminate\Auth\Events\Verified;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
@@ -20,7 +20,7 @@ class EmailVerificationTest extends TestCase
             $this->markTestSkipped('Email verification not enabled.');
         }
 
-        $user = User::factory()->withPersonalTeam()->unverified()->create();
+        $user = UserDosenTendik::factory()->withPersonalTeam()->unverified()->create();
 
         $response = $this->actingAs($user)->get('/email/verify');
 
@@ -35,7 +35,7 @@ class EmailVerificationTest extends TestCase
 
         Event::fake();
 
-        $user = User::factory()->unverified()->create();
+        $user = UserDosenTendik::factory()->unverified()->create();
 
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',
@@ -57,7 +57,7 @@ class EmailVerificationTest extends TestCase
             $this->markTestSkipped('Email verification not enabled.');
         }
 
-        $user = User::factory()->unverified()->create();
+        $user = UserDosenTendik::factory()->unverified()->create();
 
         $verificationUrl = URL::temporarySignedRoute(
             'verification.verify',

@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
+use App\Models\UserDosenTendik;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -20,13 +20,13 @@ class AdminSeeder extends Seeder
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
         // Buat user super admin jika belum ada
-        $superAdmin = User::firstOrCreate([
+        $superAdmin = UserDosenTendik::firstOrCreate([
                 'name' => 'Super Admin',
                 'email' => 'superadmin@tsu.ac.id', // Email untuk login
                 'password' => Hash::make('superadmin'), // Ganti dengan password yang aman
             ]);
 
-        $admin = User::firstOrCreate([
+        $admin = UserDosenTendik::firstOrCreate([
                 'name' => 'Admin',
                 'email' => 'admin@tsu.ac.id', // Email untuk login
                 'password' => Hash::make('admin123'), // Ganti dengan password yang aman

@@ -3,14 +3,14 @@
 namespace Database\Factories;
 
 use App\Models\Team;
-use App\Models\User;
+use App\Models\UserDosenTendik;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\User>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\UserDosenTendik>
  */
 class UserFactory extends Factory
 {
@@ -60,7 +60,7 @@ class UserFactory extends Factory
 
         return $this->has(
             Team::factory()
-                ->state(fn (array $attributes, User $user) => [
+                ->state(fn (array $attributes, UserDosenTendik $user) => [
                     'name' => $user->name.'\'s Team',
                     'user_id' => $user->id,
                     'personal_team' => true,
