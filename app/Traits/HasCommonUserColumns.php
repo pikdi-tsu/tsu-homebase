@@ -19,14 +19,14 @@ trait HasCommonUserColumns
         $table->timestamp('email_verified_at')->nullable();
         $table->string('password');
         $table->rememberToken();
-        $table->string('q1');
-        $table->string('a1');
-        $table->string('q2');
-        $table->string('a2');
-        $table->string('forgot_password_send_email');
+        $table->string('q1')->nullable();
+        $table->string('a1')->nullable();
+        $table->string('q2')->nullable();
+        $table->string('a2')->nullable();
+        $table->enum('forgot_password_send_email', [0,1])->default(0);
         $table->string('created_by');
-        $table->string('updated_by');
+        $table->string('updated_by')->nullable();
         $table->timestamps();
-        $table->string('is_active');
+        $table->enum('is_active', ['tidak aktif','aktif'])->default('aktif');
     }
 }

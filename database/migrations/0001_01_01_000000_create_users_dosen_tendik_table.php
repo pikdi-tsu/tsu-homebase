@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('users_dosen_tendik', function (Blueprint $table) {
             $table->id();
-            $table->string('nik');
+            $table->bigInteger('nik');
             $this->addCommonUserColumns($table);
         });
 

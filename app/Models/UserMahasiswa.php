@@ -21,6 +21,8 @@ class UserMahasiswa extends Model
     use TwoFactorAuthenticatable;
     use HasRoles;
 
+    protected $table = 'users_mahasiswa';
+
     protected $fillable = [
         'nim',
         'name',
@@ -30,8 +32,10 @@ class UserMahasiswa extends Model
         'a1',
         'q2',
         'a2',
-        'password',
-        'password',
+        'forgot_password_send_email',
+        'created_by',
+        'updated_by',
+        'is_active',
     ];
 
     protected $hidden = [

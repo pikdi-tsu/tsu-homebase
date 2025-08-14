@@ -4,37 +4,67 @@ namespace App\Filament\Resources;
 
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
+use App\Models\BackupUsersDosenTendik;
 use App\Models\UserDosenTendik;
+use App\Services\DefaultPasswordService;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
+use Filament\Resources\Pages\Page; // Jangan lupa tambahkan ini di atas
+use Filament\Resources\Pages\CreateRecord; // dan ini juga
+
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Hash;
 
-class UserResource extends Resource
+class UserDosenTendikResource extends Resource
 {
     protected static ?string $model = UserDosenTendik::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static ?string $navigationLabel = 'User Dosen & Tendik';
+    protected static ?string $modelLabel = 'User Dosen & Tendik';
+    protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
+
+    protected static function mutateFormDataBeforeCreate(array $data): array
+    {
+        // Panggil service untuk mendapatkan password yang sudah di-hash
+        $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
+
+        return $data;
+    }
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('name')
+                Forms\Components\Select::make('Nama Dosen/Tendik')
+                    ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
                     ->required()
-                    ->maxLength(255),
+                    ->searchable()
+                    ->preload()
+                    ->live(debounce: 250)
+                    ->afterStateUpdated(function ($state, callable $set) {
+                        $user = BackupUsersDosenTendik::where('nip', $state)->first();
+                        if ($user) {
+                            $set('email', $user->email_kampus);
+                            // $set('field_lain', $user->kolom_lain); // Tambahkan field lain jika ada
+                        }
+                    }),
                 Forms\Components\TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled(),
 //                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+//                Forms\Components\TextInput::make('password')
+//                    ->password()
+//                    ->required()
+//                    ->maxLength(255)
+//                    ->disabled(),
+//                Forms\Components\select::make('password_confirmation')
 //                Forms\Components\TextInput::make('current_team_id')
 //                    ->numeric(),
 //                Forms\Components\TextInput::make('profile_photo_path')
@@ -99,9 +129,9 @@ class UserResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUsers::route('/'),
-            'create' => Pages\CreateUser::route('/create'),
-            'edit' => Pages\EditUser::route('/{record}/edit'),
+            'index' => Pages\ListUserDosenTendik::route('/'),
+//            'create' => Pages\CreateUserDosenTendik::route('/create'),
+            'edit' => Pages\EditUserDosenTendik::route('/{record}/edit'),
         ];
     }
 }

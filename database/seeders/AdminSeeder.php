@@ -15,25 +15,56 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        // Buat role 'admin' jika belum ada
-        $superAdminRole = Role::firstOrCreate(['name' => 'super-admin']);
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
 
-        // Buat user super admin jika belum ada
-        $superAdmin = UserDosenTendik::firstOrCreate([
-                'name' => 'Super Admin',
-                'email' => 'superadmin@tsu.ac.id', // Email untuk login
-                'password' => Hash::make('superadmin'), // Ganti dengan password yang aman
-            ]);
+        $admin1 = UserDosenTendik::firstOrCreate(
+                [
+                    'email' => 'bertha@tsu.ac.id',
+                ],
+                [
+                    'nik' => '111111111111',
+                    'name' => 'Bertha',
+                    'password' => Hash::make('Nerro600'),
+                    'q1' => 'What is your nickname?',
+                    'a1' => 'bertha',
+                    'q2' => 'What is your favorite food?',
+                    'a2' => 'magelangan',
+                    'created_by' => '111111111111',
+                ]);
 
-        $admin = UserDosenTendik::firstOrCreate([
-                'name' => 'Admin',
-                'email' => 'admin@tsu.ac.id', // Email untuk login
-                'password' => Hash::make('admin123'), // Ganti dengan password yang aman
-            ]);
+        $admin2 = UserDosenTendik::firstOrCreate(
+                [
+                    'email' => 'ancase@tsu.ac.id',
+                ],
+                [
+                    'nik' => '222222222222',
+                    'name' => 'Ancase',
+                    'password' => Hash::make('ancas@241'),
+                    'q1' => 'What is your nickname?',
+                    'a1' => 'ancasea',
+                    'q2' => 'What is your favorite food?',
+                    'a2' => 'endog',
+                    'created_by' => '222222222222',
+                ]);
+
+        $admin3 = UserDosenTendik::firstOrCreate(
+                [
+                    'email' => 'bramasto@tsu.ac.id',
+                ],
+                [
+                    'nik' => '333333333333',
+                    'name' => 'Bramasto',
+                    'password' => Hash::make('bramasto@123#'),
+                    'q1' => 'What is your nickname?',
+                    'a1' => 'bramasto',
+                    'q2' => 'What is your favorite food?',
+                    'a2' => 'nasi goreng',
+                    'created_by' => '333333333333',
+                ]);
 
         // Berikan role 'admin' ke user tersebut
-        $superAdmin->assignRole($superAdminRole);
-        $admin->assignRole($adminRole);
+        $admin1->assignRole($adminRole);
+        $admin2->assignRole($adminRole);
+        $admin3->assignRole($adminRole);
     }
 }

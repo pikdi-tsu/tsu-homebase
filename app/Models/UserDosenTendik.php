@@ -22,6 +22,8 @@ class UserDosenTendik extends Authenticatable
     use TwoFactorAuthenticatable;
     use HasRoles;
 
+    protected $table = 'users_dosen_tendik';
+
     /**
      * The attributes that are mass assignable.
      *
@@ -36,8 +38,10 @@ class UserDosenTendik extends Authenticatable
         'a1',
         'q2',
         'a2',
-        'password',
-        'password',
+        'forgot_password_send_email',
+        'created_by',
+        'updated_by',
+        'is_active',
     ];
 
     /**

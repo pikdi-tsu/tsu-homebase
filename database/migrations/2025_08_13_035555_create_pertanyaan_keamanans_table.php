@@ -1,23 +1,21 @@
 <?php
 
-use App\Traits\HasCommonUserColumns;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    use HasCommonUserColumns;
-
     /**
      * Run the migrations.
      */
     public function up(): void
     {
-        Schema::create('users_mahasiswa', function (Blueprint $table) {
+        Schema::create('pertanyaan_keamanans', function (Blueprint $table) {
             $table->id();
-            $table->bigInteger('nim');
-            $this->addCommonUserColumns($table);
+            $table->string('jenis');
+            $table->string('pertanyaan');
+            $table->timestamps();
         });
     }
 
@@ -26,6 +24,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('users_mahasiswa');
+        Schema::dropIfExists('pertanyaan_keamanans');
     }
 };
