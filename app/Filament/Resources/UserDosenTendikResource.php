@@ -2,13 +2,21 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\UserResource\Pages\ListUserDosenTendik;
+use App\Filament\Resources\UserResource\Pages\EditUserDosenTendik;
 use App\Filament\Resources\UserResource\Pages;
 use App\Filament\Resources\UserResource\RelationManagers;
 use App\Models\BackupUsersDosenTendik;
 use App\Models\UserDosenTendik;
 use App\Services\DefaultPasswordService;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -23,7 +31,7 @@ class UserDosenTendikResource extends Resource
 {
     protected static ?string $model = UserDosenTendik::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'User Dosen & Tendik';
     protected static ?string $modelLabel = 'User Dosen & Tendik';
     protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
@@ -36,11 +44,11 @@ class UserDosenTendikResource extends Resource
         return $data;
     }
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\Select::make('Nama Dosen/Tendik')
+        return $schema
+            ->components([
+                Select::make('Nama Dosen/Tendik')
                     ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
                     ->required()
                     ->searchable()
@@ -53,7 +61,7 @@ class UserDosenTendikResource extends Resource
                             // $set('field_lain', $user->kolom_lain); // Tambahkan field lain jika ada
                         }
                     }),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(255)
@@ -81,10 +89,10 @@ class UserDosenTendikResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
 //                Tables\Columns\TextColumn::make('email_verified_at')
 //                    ->dateTime()
@@ -109,12 +117,12 @@ class UserDosenTendikResource extends Resource
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -129,9 +137,9 @@ class UserDosenTendikResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUserDosenTendik::route('/'),
+            'index' => ListUserDosenTendik::route('/'),
 //            'create' => Pages\CreateUserDosenTendik::route('/create'),
-            'edit' => Pages\EditUserDosenTendik::route('/{record}/edit'),
+            'edit' => EditUserDosenTendik::route('/{record}/edit'),
         ];
     }
 }

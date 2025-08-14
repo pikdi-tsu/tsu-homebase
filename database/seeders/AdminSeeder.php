@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\PertanyaanKeamanan;
 use App\Models\UserDosenTendik;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -16,6 +17,8 @@ class AdminSeeder extends Seeder
     public function run(): void
     {
         $adminRole = Role::firstOrCreate(['name' => 'admin']);
+        $pertanyaanPanggilan = PertanyaanKeamanan::where('id', 2)->first();
+        $pertanyaanMakanan = PertanyaanKeamanan::where('id', 7)->first();
 
         $admin1 = UserDosenTendik::firstOrCreate(
                 [
@@ -25,9 +28,9 @@ class AdminSeeder extends Seeder
                     'nik' => '111111111111',
                     'name' => 'Bertha',
                     'password' => Hash::make('Nerro600'),
-                    'q1' => 'What is your nickname?',
+                    'q1' => $pertanyaanPanggilan->id,
                     'a1' => 'bertha',
-                    'q2' => 'What is your favorite food?',
+                    'q2' => $pertanyaanMakanan->id,
                     'a2' => 'magelangan',
                     'created_by' => '111111111111',
                 ]);
@@ -40,9 +43,9 @@ class AdminSeeder extends Seeder
                     'nik' => '222222222222',
                     'name' => 'Ancase',
                     'password' => Hash::make('ancas@241'),
-                    'q1' => 'What is your nickname?',
+                    'q1' => $pertanyaanPanggilan->id,
                     'a1' => 'ancasea',
-                    'q2' => 'What is your favorite food?',
+                    'q2' => $pertanyaanMakanan->id,
                     'a2' => 'endog',
                     'created_by' => '222222222222',
                 ]);
@@ -55,9 +58,9 @@ class AdminSeeder extends Seeder
                     'nik' => '333333333333',
                     'name' => 'Bramasto',
                     'password' => Hash::make('bramasto@123#'),
-                    'q1' => 'What is your nickname?',
+                    'q1' => $pertanyaanPanggilan->id,
                     'a1' => 'bramasto',
-                    'q2' => 'What is your favorite food?',
+                    'q2' => $pertanyaanMakanan->id,
                     'a2' => 'nasi goreng',
                     'created_by' => '333333333333',
                 ]);

@@ -2,11 +2,17 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\UserMahasiswaResource\Pages\ListUserMahasiswa;
 use App\Filament\Resources\UserMahasiswaResource\Pages;
 use App\Filament\Resources\UserMahasiswaResource\RelationManagers;
 use App\Models\UserMahasiswa;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -18,24 +24,24 @@ class UserMahasiswaResource extends Resource
     protected static ?string $model = UserMahasiswa::class;
 
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
     protected static ?string $navigationLabel = 'User Mahasiswa';
     protected static ?string $modelLabel = 'User Mahasiswa';
     protected static ?string $pluralModelLabel = 'User Mahasiswa';
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('name')
+        return $schema
+            ->components([
+                TextInput::make('name')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('email')
+                TextInput::make('email')
                     ->email()
                     ->required()
                     ->maxLength(255),
 //                Forms\Components\DateTimePicker::make('email_verified_at'),
-                Forms\Components\TextInput::make('password')
+                TextInput::make('password')
                     ->password()
                     ->required()
                     ->maxLength(255),
@@ -46,21 +52,21 @@ class UserMahasiswaResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('name')
+                TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                Tables\Columns\TextColumn::make('email')
+                TextColumn::make('email')
                     ->searchable(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make(),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -75,7 +81,7 @@ class UserMahasiswaResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListUserMahasiswa::route('/'),
+            'index' => ListUserMahasiswa::route('/'),
 //            'create' => Pages\CreateUserMahasiswa::route('/create'),
 //            'edit' => Pages\EditUserMahasiswa::route('/{record}/edit'),
         ];

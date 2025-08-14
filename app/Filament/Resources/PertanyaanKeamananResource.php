@@ -2,11 +2,18 @@
 
 namespace App\Filament\Resources;
 
+use Filament\Schemas\Schema;
+use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\TextColumn;
+use Filament\Actions\EditAction;
+use Filament\Actions\BulkActionGroup;
+use Filament\Actions\DeleteBulkAction;
+use App\Filament\Resources\PertanyaanKeamananResource\Pages\ListPertanyaanKeamanans;
+use App\Filament\Resources\PertanyaanKeamananResource\Pages\EditPertanyaanKeamanan;
 use App\Filament\Resources\PertanyaanKeamananResource\Pages;
 use App\Filament\Resources\PertanyaanKeamananResource\RelationManagers;
 use App\Models\PertanyaanKeamanan;
 use Filament\Forms;
-use Filament\Forms\Form;
 use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -17,7 +24,7 @@ class PertanyaanKeamananResource extends Resource
 {
     protected static ?string $model = PertanyaanKeamanan::class;
 
-    protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationLabel = 'Pertanyaan Keamanan';
 
@@ -26,16 +33,21 @@ class PertanyaanKeamananResource extends Resource
     protected static ?string $pluralModelLabel = 'Pertanyaan Keamanan';
 
 
-    public static function form(Form $form): Form
+    public static function form(Schema $schema): Schema
     {
-        return $form
-            ->schema([
-                Forms\Components\TextInput::make('jenis')
+        return $schema
+            ->components([
+                TextInput::make('jenis')
                     ->required()
                     ->maxLength(255),
-                Forms\Components\TextInput::make('pertanyaan')
+                TextInput::make('pertanyaan')
                     ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->afterLabel('Huruf kecil semua dan tanpa tanda tanya (?)')
+                    ->rules(['regex:/^[a-zA-Z ]*$/'])
+                    ->validationMessages([
+                        'regex' => 'Input hanya boleh huruf dan spasi.',
+                    ]),
             ]);
     }
 
@@ -43,20 +55,25 @@ class PertanyaanKeamananResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\TextColumn::make('jenis')
+                TextColumn::make('jenis')
                     ->searchable(),
-                Tables\Columns\TextColumn::make('pertanyaan')
+                TextColumn::make('pertanyaan')
                     ->searchable(),
             ])
             ->filters([
                 //
             ])
-            ->actions([
-                Tables\Actions\EditAction::make(),
+            ->recordActions([
+                EditAction::make()
+                    ->label('Edit')
+                    ->modalHeading('Edit Pertanyaan Keamanan')
+                    ->modalSubmitActionLabel('Simpan')
+                    ->modalCancelActionLabel('Batal')
+                    ->successNotificationTitle('Berhasil Mengedit Pertanyaan Keamanan! 🎉'),
             ])
-            ->bulkActions([
-                Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+            ->toolbarActions([
+                BulkActionGroup::make([
+                    DeleteBulkAction::make(),
                 ]),
             ]);
     }
@@ -71,9 +88,9 @@ class PertanyaanKeamananResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListPertanyaanKeamanans::route('/'),
+            'index' => ListPertanyaanKeamanans::route('/'),
 //            'create' => Pages\CreatePertanyaanKeamanan::route('/create'),
-            'edit' => Pages\EditPertanyaanKeamanan::route('/{record}/edit'),
+//            'edit' => EditPertanyaanKeamanan::route('/{record}/edit'),
         ];
     }
 }

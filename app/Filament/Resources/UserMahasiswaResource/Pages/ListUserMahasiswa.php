@@ -2,6 +2,8 @@
 
 namespace App\Filament\Resources\UserMahasiswaResource\Pages;
 
+use Filament\Actions\Action;
+use Filament\Actions\CreateAction;
 use App\Filament\Resources\UserMahasiswaResource;
 use Filament\Actions;
 use Filament\Resources\Pages\ListRecords;
@@ -13,9 +15,12 @@ class ListUserMahasiswa extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            Actions\CreateAction::make()
+            CreateAction::make()
                 ->label('Tambah User Mahasiswa')
-                ->modalHeading('Tambah User Mahasiswa'),
+                ->modalHeading('Tambah User Mahasiswa')
+                ->modalSubmitActionLabel('Simpan')
+                ->modalCancelActionLabel('Batal')
+                ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi')),
         ];
     }
 }
