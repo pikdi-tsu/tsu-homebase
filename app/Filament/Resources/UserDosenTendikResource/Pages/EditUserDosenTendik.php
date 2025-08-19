@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Filament\Resources\UserResource\Pages;
+namespace App\Filament\Resources\UserDosenTendikResource\Pages;
 
 use Filament\Actions\DeleteAction;
 use App\Filament\Resources\UserDosenTendikResource;
@@ -16,5 +16,10 @@ class EditUserDosenTendik extends EditRecord
         return [
             DeleteAction::make(),
         ];
+    }
+
+    protected function getRedirectUrl(): string
+    {
+        return static::getResource()::getUrl('index');
     }
 }

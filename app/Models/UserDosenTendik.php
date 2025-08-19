@@ -5,6 +5,7 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
@@ -77,5 +78,15 @@ class UserDosenTendik extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function pertanyaanKeamananSatu(): BelongsTo
+    {
+        return $this->belongsTo(PertanyaanKeamanan::class, 'q1');
+    }
+
+    public function pertanyaanKeamananDua(): BelongsTo
+    {
+        return $this->belongsTo(PertanyaanKeamanan::class, 'q2');
     }
 }
