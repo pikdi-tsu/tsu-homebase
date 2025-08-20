@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Casts\Attribute;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
@@ -40,6 +41,11 @@ class BackupUsersDosenTendik extends Model
         'email_kampus',
     ];
 
+    public function UsersDosenTendikData(): BelongsTo
+    {
+        // Relasi dari kolom 'nik' di tabel ini ke kolom 'nip' di tabel backup
+        return $this->belongsTo(UserDosenTendik::class, 'nip', 'nik');
+    }
 
     protected function namaLengkapDanNip(): Attribute
     {

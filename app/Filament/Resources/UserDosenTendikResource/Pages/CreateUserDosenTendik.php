@@ -11,6 +11,7 @@ use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Grid;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Str;
 
 class CreateUserDosenTendik extends CreateRecord
 {
@@ -23,24 +24,64 @@ class CreateUserDosenTendik extends CreateRecord
                 ->columns(2) // Buat 2 kolom
                 ->schema([
                     Select::make('nik')
-                        ->label('Name')
-                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
-                        ->required()
-                        ->searchable()
-                        ->preload()
-                        ->live(debounce: 250)
-                        ->afterStateUpdated(function ($state, callable $set) {
+                        ->label('NIK - Nama Dosen/Tendik')
+                        ->searchable(['nama', 'nip'])
+//                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
+                        ->placeholder('Ketik nama atau NIK untuk mencari...')
+//                        ->relationship(name: 'backupData', titleAttribute: 'nama')
+//                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->nama_lengkap_dan_nip)
+                        ->getSearchResultsUsing(function (string $search): array {
+                            if (strlen($search) < 3) {
+                                return [];
+                            }
+                            return BackupUsersDosenTendik::query()
+                                ->where('nama', 'like', "%{$search}%")
+                                ->orWhere('nip', 'like', "%{$search}%")
+                                ->limit(50)
+                                ->get()
+                                ->pluck('nama_lengkap_dan_nip', 'nip')
+                                ->all();
+                        })
+//                        ->getOptionLabelsUsing(fn (string $value): array => BackupUsersDosenTendik::query()
+//                            ->where('nip', $value)?->pluck('nama', 'nip')->all())
+                        ->live(debounce: 500)
+//                        ->formatStateUsing(function (?string $state): ?string {
+//                            \Log::info($state);
+//                            if (!$state) return null;
+//
+//                            $user = BackupUsersDosenTendik::where('nip', $state)->first();
+//                            if (!$user) return $state;
+//
+//                            // Ambil nama lengkap dari accessor
+//                            $namaLengkap = $user->nama_lengkap_dan_nip;
+//
+//                            // Potong teks jika lebih dari 40 karakter, tambahkan "..."
+//                            return Str::limit($namaLengkap, 20);
+//                        })
+                        ->afterStateUpdated(function ($state, callable $set, Select $component) {
+//                            dd($state);
+                            if (is_null($state)) {
+                                $set('email', null);
+                                return;
+                            }
+
                             $user = BackupUsersDosenTendik::where('nip', $state)->first();
                             if ($user) {
                                 $set('email', $user->email_kampus);
-                                // $set('field_lain', $user->kolom_lain); // Tambahkan field lain jika ada
+                            } else {
+                                $set('email', 'Email tidak ditemukan di data backup');
                             }
-                        }),
+                        })
+                        ->preload()
+                        ->required()
+//                        ->limit(50, end: ' (more)')
+                    ,
                     TextInput::make('email')
                         ->email()
                         ->required()
                         ->maxLength(255)
-                        ->readonly(),
+                        ->readonly()
+                        ->placeholder('Email akan terisi otomatis...'),
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(
@@ -69,22 +110,6 @@ class CreateUserDosenTendik extends CreateRecord
                     TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
                     ->label('Jawaban Keamanan 2')
                         ->required(),
-//                    Forms\Components\DateTimePicker::make('email_verified_at'),
-//                    Forms\Components\TextInput::make('password')
-//                        ->password()
-//                        ->required()
-//                        ->maxLength(255)
-//                        ->disabled(),
-//                    Forms\Components\select::make('password_confirmation')
-//                    Forms\Components\TextInput::make('current_team_id')
-//                        ->numeric(),
-//                    Forms\Components\TextInput::make('profile_photo_path')
-//                        ->maxLength(2048),
-//                    Forms\Components\Textarea::make('two_factor_secret')
-//                        ->columnSpanFull(),
-//                    Forms\Components\Textarea::make('two_factor_recovery_codes')
-//                        ->columnSpanFull(),
-//                    Forms\Components\DateTimePicker::make('two_factor_confirmed_at'),
             ])
         ];
     }

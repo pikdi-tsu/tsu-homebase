@@ -39,27 +39,6 @@ class UserDosenTendikResource extends Resource
     protected static ?string $modelLabel = 'User Dosen & Tendik';
     protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
 
-//    protected static function mutateFormDataBeforeCreate(array $data): array {
-//        // Ambil NIK dari data form
-//        $nik = $data['nik']; // Pastikan nama field di form adalah 'nik'
-//
-//        // Cari data lengkap user di tabel backup berdasarkan NIK
-//        $backupUser = BackupUsersDosenTendik::where('nip', $nik)->first();
-//
-//        // "Suntikkan" nama lengkapnya
-//        if ($backupUser) {
-//            $data['name'] = $backupUser->name;
-//        }
-//
-//        // Logika password default
-//        $data['password'] = (new PasswordService())->getDefaultHashedPassword();
-//
-//        // Logika created_by
-//        $data['created_by'] = Auth::user()->nik;
-//
-//        return $data;
-//    }
-
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -113,44 +92,25 @@ class UserDosenTendikResource extends Resource
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('name')
-                    ->label('nama dosen/tendik')
+                    ->label('Nama Dosen/Tendik')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
-                    ->label('pertanyaan keamanan 1')
+                    ->label('Pertanyaan Keamanan 1')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
                     ->searchable(),
                 TextColumn::make('a1')
-                    ->label('jawaban keamanan 1')
+                    ->label('Jawaban Keamanan 1')
                     ->searchable(),
                 TextColumn::make('pertanyaanKeamananDua.pertanyaan')
-                    ->label('pertanyaan keamanan 2')
+                    ->label('Pertanyaan Keamanan 2')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
                     ->searchable(),
                 TextColumn::make('a2')
-                    ->label('jawaban keamanan 2')
+                    ->label('Jawaban Keamanan 2')
                     ->searchable(),
-//                Tables\Columns\TextColumn::make('email_verified_at')
-//                    ->dateTime()
-//                    ->sortable(),
-//                Tables\Columns\TextColumn::make('current_team_id')
-//                    ->numeric()
-//                    ->sortable(),
-//                Tables\Columns\TextColumn::make('profile_photo_path')
-//                    ->searchable(),
-//                Tables\Columns\TextColumn::make('created_at')
-//                    ->dateTime()
-//                    ->sortable()
-//                    ->toggleable(isToggledHiddenByDefault: true),
-//                Tables\Columns\TextColumn::make('updated_at')
-//                    ->dateTime()
-//                    ->sortable()
-//                    ->toggleable(isToggledHiddenByDefault: true),
-//                Tables\Columns\TextColumn::make('two_factor_confirmed_at')
-//                    ->dateTime()
-//                    ->sortable(),
             ])
             ->filters([
                 //

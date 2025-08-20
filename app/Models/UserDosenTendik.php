@@ -80,6 +80,12 @@ class UserDosenTendik extends Authenticatable
         ];
     }
 
+    public function backupData(): BelongsTo
+    {
+        // Relasi dari kolom 'nik' di tabel ini ke kolom 'nip' di tabel backup
+        return $this->belongsTo(BackupUsersDosenTendik::class, 'nik', 'nip');
+    }
+
     public function pertanyaanKeamananSatu(): BelongsTo
     {
         return $this->belongsTo(PertanyaanKeamanan::class, 'q1');

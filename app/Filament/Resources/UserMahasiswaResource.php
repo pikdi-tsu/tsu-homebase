@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\PertanyaanKeamanan;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
@@ -18,6 +19,7 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Filament\Forms\Components\Select;
 
 class UserMahasiswaResource extends Resource
 {
@@ -34,17 +36,42 @@ class UserMahasiswaResource extends Resource
         return $schema
             ->components([
                 TextInput::make('name')
+                    ->label('nama mahasiswa')
                     ->required()
                     ->maxLength(255),
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255),
-//                Forms\Components\DateTimePicker::make('email_verified_at'),
-                TextInput::make('password')
-                    ->password()
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->disabled(),
+                Select::make('q1')
+                    ->label('Pertanyaan Keamanan 1')
+                    ->options(
+                        PertanyaanKeamanan::where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
+                        ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
+                            // 3. Buat array [id => "Pertanyaan... ?"]
+                            return [$item->id => $item->pertanyaan . '?'];
+                        })
+                    )
+                    ->searchable()
+                    ->required(),
+                Select::make('q2') // Ini akan menyimpan ID pertanyaan
+                ->label('Pertanyaan Keamanan 2')
+                    ->options(
+                        PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
+                        ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
+                            // 3. Buat array [id => "Pertanyaan... ?"]
+                            return [$item->id => $item->pertanyaan . '?'];
+                        })
+                    )
+                    ->searchable()
+                    ->required(),
+                TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
+                ->label('Jawaban Keamanan 1')
+                    ->required(),
+                TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
+                ->label('Jawaban Keamanan 2')
+                    ->required(),
             ]);
     }
 
@@ -52,10 +79,29 @@ class UserMahasiswaResource extends Resource
     {
         return $table
             ->columns([
+                TextColumn::make('nik')
+                    ->label('NIM mahasiswa')
+                    ->searchable()
+                    ->sortable(),
                 TextColumn::make('name')
+                    ->label('Nama Mahasiswa')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
+                    ->label('Pertanyaan Keamanan 1')
+                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+                    ->searchable(),
+                TextColumn::make('a1')
+                    ->label('Jawaban Keamanan 1')
+                    ->searchable(),
+                TextColumn::make('pertanyaanKeamananDua.pertanyaan')
+                    ->label('Pertanyaan Keamanan 2')
+                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+                    ->searchable(),
+                TextColumn::make('a2')
+                    ->label('Jawaban Keamanan 2')
                     ->searchable(),
             ])
             ->filters([
@@ -83,7 +129,7 @@ class UserMahasiswaResource extends Resource
         return [
             'index' => ListUserMahasiswa::route('/'),
 //            'create' => Pages\CreateUserMahasiswa::route('/create'),
-//            'edit' => Pages\EditUserMahasiswa::route('/{record}/edit'),
+            'edit' => Pages\EditUserMahasiswa::route('/{record}/edit'),
         ];
     }
 }
