@@ -50,8 +50,7 @@ class UserDosenTendikResource extends Resource
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255)
-                    ->disabled(),
+                    ->maxLength(255),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(

@@ -42,8 +42,7 @@ class UserMahasiswaResource extends Resource
                 TextInput::make('email')
                     ->email()
                     ->required()
-                    ->maxLength(255)
-                    ->disabled(),
+                    ->maxLength(255),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
@@ -79,7 +78,7 @@ class UserMahasiswaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nik')
+                TextColumn::make('nim')
                     ->label('NIM mahasiswa')
                     ->searchable()
                     ->sortable(),

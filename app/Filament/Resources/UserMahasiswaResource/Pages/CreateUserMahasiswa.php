@@ -3,7 +3,6 @@
 namespace App\Filament\Resources\UserMahasiswaResource\Pages;
 
 use App\Filament\Resources\UserMahasiswaResource;
-use App\Models\BackupUsersDosenTendik;
 use App\Models\BackupUsersMahasiswa;
 use App\Models\PertanyaanKeamanan;
 use Filament\Actions;
@@ -35,8 +34,12 @@ class CreateUserMahasiswa extends CreateRecord
                             return BackupUsersMahasiswa::where('nama', 'like', "%{$search}%")
                                 ->orWhere('nim', 'like', "%{$search}%")
                                 ->limit(50)
+                                ->get()
                                 ->pluck('nama_lengkap_dan_nim', 'nim')
                                 ->all();
+                        })
+                        ->getOptionLabelUsing(function ($value): ?string {
+                            return BackupUsersMahasiswa::where('nim', $value)->first()?->nama_lengkap_dan_nim;
                         })
                         ->required()
                         ->searchable()
@@ -58,7 +61,6 @@ class CreateUserMahasiswa extends CreateRecord
                         }),
                     TextInput::make('email')
                         ->email()
-                        ->required()
                         ->maxLength(255)
                         ->readonly()
                         ->placeholder('Email akan terisi otomatis...'),
@@ -71,8 +73,7 @@ class CreateUserMahasiswa extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
                     ->label('Pertanyaan Keamanan 2')
                         ->options(
@@ -82,14 +83,11 @@ class CreateUserMahasiswa extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 1')
-                        ->required(),
+                    ->label('Jawaban Keamanan 1'),
                     TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 2')
-                        ->required(),
+                    ->label('Jawaban Keamanan 2'),
                 ])
         ];
     }

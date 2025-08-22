@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\UserMahasiswa;
+use App\Services\DefaultPasswordService;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
@@ -16,13 +17,13 @@ class MahasiswaSeeder extends Seeder
     {
         $admin1 = UserMahasiswa::firstOrCreate(
                 [
-                    'email' => 'mahasiswa1@tsu.ac.id',
+                    'email' => 'ivanbadai@tsu.ac.id',
                 ],
                 [
                 'nim' => '25100001',
-                'name' => 'Mahasiswa1',
-                'password' => Hash::make('mahasiswa1@123'),
-                'created_by' => '25100001',
+                'name' => 'Ivan Badai Muhammad',
+                'password' => resolve(DefaultPasswordService::class)->getDefaultHashedPassword(),
+                'created_by' => '202025109',
             ]);
     }
 }

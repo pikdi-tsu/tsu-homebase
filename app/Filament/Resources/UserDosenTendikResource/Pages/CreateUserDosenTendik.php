@@ -28,8 +28,6 @@ class CreateUserDosenTendik extends CreateRecord
                         ->searchable(['nama', 'nip'])
 //                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
                         ->placeholder('Ketik nama atau NIK untuk mencari...')
-//                        ->relationship(name: 'backupData', titleAttribute: 'nama')
-//                        ->getOptionLabelFromRecordUsing(fn ($record) => $record->nama_lengkap_dan_nip)
                         ->getSearchResultsUsing(function (string $search): array {
                             if (strlen($search) < 3) {
                                 return [];
@@ -41,6 +39,9 @@ class CreateUserDosenTendik extends CreateRecord
                                 ->get()
                                 ->pluck('nama_lengkap_dan_nip', 'nip')
                                 ->all();
+                        })
+                        ->getOptionLabelUsing(function ($value): ?string {
+                            return BackupUsersDosenTendik::where('nip', $value)->first()?->nama_lengkap_dan_nip;
                         })
 //                        ->getOptionLabelsUsing(fn (string $value): array => BackupUsersDosenTendik::query()
 //                            ->where('nip', $value)?->pluck('nama', 'nip')->all())
@@ -73,9 +74,7 @@ class CreateUserDosenTendik extends CreateRecord
                             }
                         })
                         ->preload()
-                        ->required()
-//                        ->limit(50, end: ' (more)')
-                    ,
+                        ->required(),
                     TextInput::make('email')
                         ->email()
                         ->required()
@@ -91,8 +90,7 @@ class CreateUserDosenTendik extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable()
-                        ->required(),
+                        ->searchable(),
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
                         ->label('Pertanyaan Keamanan 2')
                         ->options(
@@ -102,14 +100,11 @@ class CreateUserDosenTendik extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable()
-                        ->required(),
-                    TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 1')
-                        ->required(),
-                    TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 2')
-                        ->required(),
+                        ->searchable(),
+                    TextInput::make('a1')
+                    ->label('Jawaban Keamanan 1'),
+                    TextInput::make('a2')
+                    ->label('Jawaban Keamanan 2'),
             ])
         ];
     }
