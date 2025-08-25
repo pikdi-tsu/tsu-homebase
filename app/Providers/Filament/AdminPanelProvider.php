@@ -2,6 +2,8 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Widgets\LastLoggedInUsersDosenTendikWidget;
+use App\Filament\Widgets\LastLoggedInUsersMahasiswaWidget;
 use App\Filament\Widgets\LatestUsersDosenTendikWidget;
 use App\Filament\Widgets\LatestUsersMahasiswaWidget;
 use App\Filament\Widgets\UserStatsOverview;
@@ -50,9 +52,11 @@ class AdminPanelProvider extends PanelProvider
             ->widgets([
 //                Widgets\AccountWidget::class,
 //                Widgets\FilamentInfoWidget::class,
+                UserStatsOverview::class,
                 LatestUsersDosenTendikWidget::class,
                 LatestUsersMahasiswaWidget::class,
-                UserStatsOverview::class,
+                LastLoggedInUsersDosenTendikWidget::class,
+                LastLoggedInUsersMahasiswaWidget::class,
             ])
             ->middleware([
                 EncryptCookies::class,

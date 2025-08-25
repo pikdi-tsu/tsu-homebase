@@ -2,33 +2,28 @@
 
 namespace App\Filament\Widgets;
 
-use Filament\Actions\Action;
+use App\Models\UserDosenTendik;
 use Filament\Actions\BulkActionGroup;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget;
 use Illuminate\Database\Eloquent\Builder;
-use app\Models\UserDosenTendik;
 
-class LatestUsersDosenTendikWidget extends TableWidget
+class LastLoggedInUsersDosenTendikWidget extends TableWidget
 {
-    protected static ?int $sort = -1;
-
-    protected int | string | array $columnSpan = 'full';
+    protected static ?int $sort = 0;
 
     public function table(Table $table): Table
     {
         return $table
-            ->query(fn (): Builder => UserDosenTendik::query()->latest()->limit(5))
+            ->query(fn (): Builder => UserDosenTendik::query()->orderBy('last_login_at', 'desc')->limit(5))
             ->columns([
                 TextColumn::make('nik')
                     ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
-                TextColumn::make('created_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('updated_at')
+                TextColumn::make('is_active'),
+                TextColumn::make('last_login_at')
                     ->dateTime()
                     ->sortable(),
             ])
@@ -39,8 +34,7 @@ class LatestUsersDosenTendikWidget extends TableWidget
                 //
             ])
             ->recordActions([
-                Action::make('View')
-                    ->url(fn (UserDosenTendik $record): string => route('filament.admin.resources.user-dosen-tendiks.edit', $record)),
+                //
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

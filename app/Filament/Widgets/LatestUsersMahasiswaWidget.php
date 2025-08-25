@@ -12,13 +12,16 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LatestUsersMahasiswaWidget extends TableWidget
 {
+    protected static ?int $sort = -1;
+
+    protected int | string | array $columnSpan = 'full';
+
     public function table(Table $table): Table
     {
         return $table
             ->query(fn (): Builder => UserMahasiswa::query()->latest()->limit(5))
             ->columns([
                 TextColumn::make('nim')
-                    ->numeric()
                     ->sortable(),
                 TextColumn::make('name')
                     ->searchable(),
@@ -26,10 +29,6 @@ class LatestUsersMahasiswaWidget extends TableWidget
                     ->dateTime()
                     ->sortable(),
                 TextColumn::make('updated_at')
-                    ->dateTime()
-                    ->sortable(),
-                TextColumn::make('is_active'),
-                TextColumn::make('last_login_at')
                     ->dateTime()
                     ->sortable(),
             ])
