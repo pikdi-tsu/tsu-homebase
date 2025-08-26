@@ -10,9 +10,11 @@ class UserCompositionChart extends ChartWidget
 {
     protected ?string $heading = 'Komposisi Pengguna';
 
-//    protected int | string | array $columnSpan = 'full';
+    protected int | string | array $columnSpan = 'full';
 
-    protected static ?int $sort = 4;
+    protected ?string $maxHeight = '300px';
+
+    protected static ?int $sort = 0;
 
     protected function getData(): array
     {

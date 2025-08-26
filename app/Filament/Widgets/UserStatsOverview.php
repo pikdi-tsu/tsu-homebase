@@ -13,6 +13,8 @@ class UserStatsOverview extends StatsOverviewWidget
 
     protected int | null | array $columns = 2;
 
+    protected int | string | array $columnSpan = 'full';
+
     protected function getStats(): array
     {
         return [

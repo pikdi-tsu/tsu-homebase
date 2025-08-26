@@ -14,7 +14,7 @@ class LatestUsersMahasiswaWidget extends TableWidget
 {
     protected static ?string $heading = 'User Mahasiswa Terbaru';
 
-    protected static ?int $sort = 0;
+    protected static ?int $sort = 1;
 
 //    protected int | string | array $columnSpan = 'full';
 
