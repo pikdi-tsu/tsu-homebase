@@ -48,12 +48,12 @@ class PertanyaanKeamananResource extends Resource
                     ->validationMessages([
                         'regex' => 'Input hanya boleh huruf dan spasi.',
                     ]),
-                Select::make('status')
-                    ->options([
-                        'aktif' => 'Aktif',
-                        'nonaktif' => 'Nonaktif',
-                    ])
-                    ->required(),
+//                Select::make('status')
+//                    ->options([
+//                        'aktif' => 'Aktif',
+//                        'nonaktif' => 'Nonaktif',
+//                    ])
+//                    ->required(),
             ]);
     }
 
