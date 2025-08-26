@@ -12,9 +12,11 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LatestUsersMahasiswaWidget extends TableWidget
 {
-    protected static ?int $sort = -1;
+    protected static ?string $heading = 'User Mahasiswa Terbaru';
 
-    protected int | string | array $columnSpan = 'full';
+    protected static ?int $sort = 0;
+
+//    protected int | string | array $columnSpan = 'full';
 
     public function table(Table $table): Table
     {

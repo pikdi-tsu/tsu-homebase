@@ -17,6 +17,13 @@ class ListUserDosenTendik extends ListRecords
 {
     protected static string $resource = UserDosenTendikResource::class;
 
+//    protected $listeners = ['openCreateModalForDosenTendik' => 'openCreateModal'];
+//
+//    public function openCreateModal(): void
+//    {
+//        $this->mountAction('create');
+//    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -55,7 +62,8 @@ class ListUserDosenTendik extends ListRecords
                     $data['created_by'] = Auth::user()->nik;
 
                     return static::getModel()::create($data);
-                }),
+                })
+                ->successNotificationTitle('User Dosen/Tendikberhasil ditambahkan'),
         ];
     }
 }

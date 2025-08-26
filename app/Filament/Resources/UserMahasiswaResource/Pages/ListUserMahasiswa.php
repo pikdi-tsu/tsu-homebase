@@ -19,6 +19,13 @@ class ListUserMahasiswa extends ListRecords
 {
     protected static string $resource = UserMahasiswaResource::class;
 
+//    protected $listeners = ['openCreateModalForMahasiswa' => 'openCreateModal'];
+//
+//    public function openCreateModal(): void
+//    {
+//        $this->mountAction('create');
+//    }
+
     protected function getHeaderActions(): array
     {
         return [
@@ -57,7 +64,8 @@ class ListUserMahasiswa extends ListRecords
                     $data['created_by'] = Auth::user()->nik;
 
                     return static::getModel()::create($data);
-                }),
+                })
+                ->successNotificationTitle('User Mahasiswa berhasil ditambahkan'),
         ];
     }
 }

@@ -11,7 +11,7 @@ use Illuminate\Database\Eloquent\Builder;
 
 class LastLoggedInUsersDosenTendikWidget extends TableWidget
 {
-    protected static ?int $sort = 0;
+    protected static ?int $sort = 1;
 
     public function table(Table $table): Table
     {
