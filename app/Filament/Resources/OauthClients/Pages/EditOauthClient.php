@@ -1,14 +1,14 @@
 <?php
 
-namespace App\Filament\Resources\UserDosenTendikResource\Pages;
+namespace App\Filament\Resources\OauthClients\Pages;
 
+use App\Filament\Resources\OauthClients\OauthClientResource;
 use Filament\Actions\DeleteAction;
-use App\Filament\Resources\UserDosenTendikResource;
 use Filament\Resources\Pages\EditRecord;
 
-class EditUserDosenTendik extends EditRecord
+class EditOauthClient extends EditRecord
 {
-    protected static string $resource = UserDosenTendikResource::class;
+    protected static string $resource = OauthClientResource::class;
 
     protected function getHeaderActions(): array
     {

@@ -25,7 +25,6 @@ class CreateUserMahasiswa extends CreateRecord
                     Select::make('nim')
                         ->label('NIM - Nama Mahasiswa')
 //                        ->options(BackupUsersMahasiswa::all()->pluck('nama_lengkap_dan_nim', 'nim'))
-                        ->placeholder('Ketik nama atau NIM untuk mencari...')
                         ->getSearchResultsUsing(function (string $search): array {
                             if (strlen($search) < 3) {
                                 return [];
@@ -43,6 +42,8 @@ class CreateUserMahasiswa extends CreateRecord
                         })
                         ->required()
                         ->searchable()
+                        ->placeholder('Pilih salah satu data Mahasiswa')
+                        ->searchPrompt('Ketik NIM atau Nama untuk mencari...')
                         ->preload()
                         ->live(debounce: 250)
                         ->afterStateUpdated(function ($state, callable $set) {
@@ -73,7 +74,9 @@ class CreateUserMahasiswa extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable(),
+                        ->searchable()
+                        ->placeholder('Pilih salah satu pertanyaan keamanan')
+                        ->searchPrompt('Ketik untuk mencari...'),
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
                     ->label('Pertanyaan Keamanan 2')
                         ->options(
@@ -83,7 +86,9 @@ class CreateUserMahasiswa extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable(),
+                        ->searchable()
+                        ->placeholder('Pilih salah satu pertanyaan keamanan')
+                        ->searchPrompt('Ketik untuk mencari...'),
                     TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
                     ->label('Jawaban Keamanan 1'),
                     TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya

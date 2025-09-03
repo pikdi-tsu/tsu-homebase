@@ -27,7 +27,8 @@ class CreateUserDosenTendik extends CreateRecord
                         ->label('NIK - Nama Dosen/Tendik')
                         ->searchable(['nama', 'nip'])
 //                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
-                        ->placeholder('Ketik nama atau NIK untuk mencari...')
+                        ->placeholder('Pilih salah satu data Karyawan')
+                        ->searchPrompt('Ketik NIK atau Nama untuk mencari...')
                         ->getSearchResultsUsing(function (string $search): array {
                             if (strlen($search) < 3) {
                                 return [];
@@ -60,7 +61,6 @@ class CreateUserDosenTendik extends CreateRecord
 //                            return Str::limit($namaLengkap, 20);
 //                        })
                         ->afterStateUpdated(function ($state, callable $set, Select $component) {
-//                            dd($state);
                             if (is_null($state)) {
                                 $set('email', null);
                                 return;
@@ -90,7 +90,9 @@ class CreateUserDosenTendik extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable(),
+                        ->searchable()
+                        ->placeholder('Pilih salah satu pertanyaan keamanan')
+                        ->searchPrompt('Ketik untuk mencari...'),
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
                         ->label('Pertanyaan Keamanan 2')
                         ->options(
@@ -100,7 +102,9 @@ class CreateUserDosenTendik extends CreateRecord
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
-                        ->searchable(),
+                        ->searchable()
+                        ->placeholder('Pilih salah satu pertanyaan keamanan')
+                        ->searchPrompt('Ketik untuk mencari...'),
                     TextInput::make('a1')
                     ->label('Jawaban Keamanan 1'),
                     TextInput::make('a2')

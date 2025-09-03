@@ -15,6 +15,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->trustProxies('*');
         $middleware->alias([
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
+            'scopes' => \Laravel\Passport\Http\Middleware\CheckTokenForAnyScope::class,
+            'scope' => \Laravel\Passport\Http\Middleware\CheckToken::class,
+            'client' => \Laravel\Passport\Http\Middleware\EnsureClientIsResourceOwner::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

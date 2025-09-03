@@ -3,7 +3,9 @@
 namespace App\Filament\Resources;
 
 use App\Models\PertanyaanKeamanan;
+use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
+use Filament\Notifications\Notification;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -24,7 +26,6 @@ use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Resources\Pages\Page; // Jangan lupa tambahkan ini di atas
 use Filament\Resources\Pages\CreateRecord; // dan ini juga
-
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
@@ -33,8 +34,7 @@ use Illuminate\Support\Facades\Hash;
 class UserDosenTendikResource extends Resource
 {
     protected static ?string $model = UserDosenTendik::class;
-
-    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-rectangle-stack';
+    protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'User Dosen & Tendik';
     protected static ?string $modelLabel = 'User Dosen & Tendik';
     protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
@@ -116,6 +116,40 @@ class UserDosenTendikResource extends Resource
             ])
             ->recordActions([
                 EditAction::make(),
+                Action::make('createToken')
+                    ->label('Buat Token API Pribadi')
+                    ->icon('heroicon-o-key')
+                    // Aksi ini akan memunculkan modal dengan form
+                    ->schema([
+                        TextInput::make('name')
+                            ->label('Nama Token')
+                            ->placeholder('Contoh: Skrip laporan saya')
+                            ->required(),
+                    ])
+                    // Tentukan apa yang terjadi saat form di-submit
+                    ->action(function (array $data, UserDosenTendik $record) {
+                        // 2. Ganti '$this->record' menjadi '$record'
+                        $token = $record->createToken($data['name']);
+                        $accessToken = $token->accessToken;
+
+                        Notification::make()
+                            ->title('Token Pribadi Dibuat!')
+//                            ->body("Token untuk {$record->name} tidak akan ditampilkan lagi. Salin sekarang: {$accessToken}")
+                            ->body("Token {$record->name} sudah siap. Klik tombol di bawah untuk menyalin.")
+                            ->persistent()
+                            ->actions([
+                                Action::make('copy')
+                                    ->label('Salin Token')
+                                    ->button()
+                                    ->color('gray')
+                                    ->icon('heroicon-o-clipboard-document')
+                                    ->dispatch('copy-to-clipboard', [
+                                        'token' => $accessToken,
+                                    ])
+                            ])
+                            ->success()
+                            ->send();
+                    })
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

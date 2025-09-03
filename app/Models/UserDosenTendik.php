@@ -10,19 +10,19 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\Contracts\OAuthenticatable;
+use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
 
-class UserDosenTendik extends Authenticatable
+class UserDosenTendik extends Authenticatable implements OAuthenticatable
 {
-    use HasApiTokens;
-
     /** @use HasFactory<UserFactory> */
     use HasFactory;
     use HasProfilePhoto;
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
+    use HasApiTokens;
 
     protected $table = 'users_dosen_tendik';
 
@@ -82,7 +82,6 @@ class UserDosenTendik extends Authenticatable
 
     public function backupData(): BelongsTo
     {
-        // Relasi dari kolom 'nik' di tabel ini ke kolom 'nip' di tabel backup
         return $this->belongsTo(BackupUsersDosenTendik::class, 'nik', 'nip');
     }
 
