@@ -16,7 +16,6 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $adminRole = Role::firstOrCreate(['name' => 'admin']);
         $pertanyaanPanggilan = PertanyaanKeamanan::where('id', 2)->first();
         $pertanyaanMakanan = PertanyaanKeamanan::where('id', 7)->first();
 
@@ -66,8 +65,10 @@ class AdminSeeder extends Seeder
                 ]);
 
         // Berikan role 'admin' ke user tersebut
+        $superAdminRole = Role::query()->where('name', 'super admin')->first();
+        $adminRole = Role::query()->where('name', 'admin')->first();
         $admin1->assignRole($adminRole);
-        $admin2->assignRole($adminRole);
+        $admin2->assignRole($superAdminRole);
         $admin3->assignRole($adminRole);
     }
 }

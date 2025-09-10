@@ -3,6 +3,8 @@
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+use Filament\Notifications\Notification;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,5 +23,25 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        //
+        $exceptions->renderable(function (HttpException $e, $request) {
+            // Cek apakah status kodenya adalah 403 (Forbidden)
+            if ($e->getStatusCode() === 403) {
+                // Cek apakah user sudah login DAN sedang mencoba akses panel admin
+                if (Auth::check() && $request->is('admin/*')) {
+                    // Jika ini adalah request halaman biasa (bukan aksi dari tombol/AJAX)
+                    if (!$request->ajax() && !$request->header('X-Livewire')) {
+                        // Alihkan ke dashboard Jetstream
+                        return redirect()->route('dashboard');
+                    }
+                    // Untuk request aksi (AJAX/Livewire), tetap tampilkan TOAST
+                    Notification::make()
+                        ->title('Aksi Ditolak')
+                        ->body('Anda tidak memiliki hak akses yang diperlukan.')
+                        ->danger()
+                        ->send();
+
+                    return redirect()->back();
+                }
+            }
+        });
     })->create();

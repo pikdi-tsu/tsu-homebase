@@ -6,6 +6,7 @@ use App\Models\PertanyaanKeamanan;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -27,9 +28,11 @@ use Filament\Tables\Table;
 use Filament\Resources\Pages\Page; // Jangan lupa tambahkan ini di atas
 use Filament\Resources\Pages\CreateRecord; // dan ini juga
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Role;
 
 class UserDosenTendikResource extends Resource
 {
@@ -39,30 +42,102 @@ class UserDosenTendikResource extends Resource
     protected static ?string $modelLabel = 'User Dosen & Tendik';
     protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
 
+    /**
+     * Menentukan apakah user bisa melihat daftar resource ini di navigasi.
+     * Jika hasilnya false, menu "User Dosen & Tendik" akan hilang.
+     */
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('homebase:user-dosen-tendik:view-any');
+    }
+
+    /**
+     * Menentukan apakah user bisa melihat halaman detail record.
+     */
+    public static function canView(Model $record): bool
+    {
+        return Auth::user()->can('homebase:user-dosen-tendik:view');
+    }
+
+    /**
+     * Menentukan apakah user bisa membuat record baru.
+     * Jika false, tombol "New user..." akan hilang.
+     */
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('homebase:user-dosen-tendik:create');
+    }
+
+    /**
+     * Menentukan apakah user bisa mengedit record.
+     * Jika false, tombol "Edit" di tabel akan hilang.
+     */
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->can('homebase:user-dosen-tendik:update');
+    }
+
+    /**
+     * Menentukan apakah user bisa menghapus record.
+     * Jika false, tombol "Delete" di tabel akan hilang.
+     */
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->can('homebase:user-dosen-tendik:delete');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
                     ->label('nama dosen/tendik')
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull()
+                    ->required(),
                 TextInput::make('email')
                     ->email()
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull()
+                    ->required(),
+                Select::make('roles')
+                    ->label('Jabatan (Roles)')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->placeholder('Belum di set')
+                    ->searchable()
+                    ->preload(),
+                Select::make('permissions')
+                    ->label('Izin Tambahan (Direct Permissions)')
+                    ->relationship('permissions','name',
+                        function (Builder $query, Get $get) {
+                            // Ambil roles yang sedang dipilih
+                            $roles = Role::find($get('roles'));
+                            if (!$roles->count()) {
+                                return $query;
+                            }
+                            // Ambil guard dari role pertama yang dipilih
+                            $guard = $roles->first()->guard_name;
+
+                            // Filter permission berdasarkan guard tersebut
+                            return $query->where('guard_name', $guard);
+                        }
+                    )
+                    ->searchable()
+                    ->multiple()
+                    ->preload(),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
-                        PertanyaanKeamanan::where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
-                        ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                            // 3. Buat array [id => "Pertanyaan... ?"]
+                        PertanyaanKeamanan::where('jenis', 'q1')->get() // Ambil semua data sebagai collection
+                        ->mapWithKeys(function ($item) { // Lakukan iterasi untuk setiap item
                             return [$item->id => $item->pertanyaan . '?'];
                         })
                     )
+                    ->placeholder('Belum di set')
                     ->searchable()
                     ->required(),
-                Select::make('q2') // Ini akan menyimpan ID pertanyaan
+                Select::make('q2')
                 ->label('Pertanyaan Keamanan 2')
                     ->options(
                         PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
@@ -71,13 +146,16 @@ class UserDosenTendikResource extends Resource
                             return [$item->id => $item->pertanyaan . '?'];
                         })
                     )
+                    ->placeholder('Belum di set')
                     ->searchable()
                     ->required(),
-                TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
-                ->label('Jawaban Keamanan 1')
+                TextInput::make('a1')
+                    ->label('Jawaban Keamanan 1')
+                    ->placeholder('Belum di set')
                     ->required(),
-                TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
-                ->label('Jawaban Keamanan 2')
+                TextInput::make('a2')
+                    ->label('Jawaban Keamanan 2')
+                    ->placeholder('Belum di set')
                     ->required(),
             ]);
     }
@@ -96,19 +174,38 @@ class UserDosenTendikResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
+                TextColumn::make('roles.name')
+                    ->label('Jabatan (Roles)')
+                    ->placeholder('Tidak ada role')
+                    ->badge()
+                    ->searchable(),
+                TextColumn::make('permissions.name')
+                    ->label('Izin Tambahan')
+                    ->badge()
+                    ->placeholder('Tidak ada izin tambahan')
+                    ->color('success') // Beri warna berbeda agar mudah dibedakan dari roles
+                    ->limit(3)
+                    ->tooltip(function (Model $record): string {
+                        // Spatie 'permissions' relationship hanya mengambil direct permissions
+                        return $record->permissions->pluck('name')->implode(', ');
+                    }),
                 TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
                     ->label('Pertanyaan Keamanan 1')
+                    ->placeholder('Belum di set')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
                     ->searchable(),
                 TextColumn::make('a1')
                     ->label('Jawaban Keamanan 1')
+                    ->placeholder('Belum di set')
                     ->searchable(),
                 TextColumn::make('pertanyaanKeamananDua.pertanyaan')
                     ->label('Pertanyaan Keamanan 2')
+                    ->placeholder('Belum di set')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
                     ->searchable(),
                 TextColumn::make('a2')
                     ->label('Jawaban Keamanan 2')
+                    ->placeholder('Belum di set')
                     ->searchable(),
             ])
             ->filters([

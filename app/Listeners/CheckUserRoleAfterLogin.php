@@ -24,16 +24,19 @@ class CheckUserRoleAfterLogin
     {
         /** @var Authenticatable $user */
         $user = $event->user;
+        $user->forgetCachedPermissions();
 
         // Cek apakah user punya model dan method yang kita butuhkan
         if (method_exists($user, 'hasAnyRole')) {
-            if ($user->hasAnyRole(['admin', 'superadmin'])) {
+//            dd($user->hasAnyRole('super admin'));
+            if ($user->hasAnyRole('admin|super admin')) {
                 $user->last_login_at = now();
                 $user->save();
-            } else {
-                request()->session()->flash('error', 'Anda tidak memiliki hak akses untuk masuk.');
-                Auth::logout();
             }
+//            else {
+//                Auth::logout();
+//                request()->session()->flash('error', 'Anda tidak memiliki hak akses untuk masuk.');
+//            }
         }
     }
 }

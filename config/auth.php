@@ -46,6 +46,11 @@ return [
             'driver' => 'passport',
             'provider' => 'users',
         ],
+
+        'api2' => [
+            'driver' => 'passport',
+            'provider' => 'users2',
+        ],
     ],
 
     /*
@@ -69,6 +74,11 @@ return [
         'users' => [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\UserDosenTendik::class),
+        ],
+
+        'users2' => [
+            'driver' => 'eloquent',
+            'model' => App\Models\UserMahasiswa::class,
         ],
 
         // 'users' => [

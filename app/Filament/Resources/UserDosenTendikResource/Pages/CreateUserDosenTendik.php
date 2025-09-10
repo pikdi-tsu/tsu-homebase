@@ -10,8 +10,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class CreateUserDosenTendik extends CreateRecord
 {
@@ -25,9 +28,8 @@ class CreateUserDosenTendik extends CreateRecord
                 ->schema([
                     Select::make('nik')
                         ->label('NIK - Nama Dosen/Tendik')
-                        ->searchable(['nama', 'nip'])
-//                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
                         ->placeholder('Pilih salah satu data Karyawan')
+//                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
                         ->searchPrompt('Ketik NIK atau Nama untuk mencari...')
                         ->getSearchResultsUsing(function (string $search): array {
                             if (strlen($search) < 3) {
@@ -46,7 +48,6 @@ class CreateUserDosenTendik extends CreateRecord
                         })
 //                        ->getOptionLabelsUsing(fn (string $value): array => BackupUsersDosenTendik::query()
 //                            ->where('nip', $value)?->pluck('nama', 'nip')->all())
-                        ->live(debounce: 500)
 //                        ->formatStateUsing(function (?string $state): ?string {
 //                            \Log::info($state);
 //                            if (!$state) return null;
@@ -73,14 +74,44 @@ class CreateUserDosenTendik extends CreateRecord
                                 $set('email', 'Email tidak ditemukan di data backup');
                             }
                         })
+                        ->searchable(['nama', 'nip'])
+                        ->live(debounce: 500)
                         ->preload()
+                        ->columnSpanFull()
                         ->required(),
                     TextInput::make('email')
                         ->email()
                         ->required()
                         ->maxLength(255)
                         ->readonly()
+                        ->columnSpanFull()
                         ->placeholder('Email akan terisi otomatis...'),
+                    Select::make('roles')
+                        ->label('Jabatan (Roles)')
+                        ->multiple()
+                        ->relationship('roles', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
+                    Select::make('permissions')
+                        ->label('Izin Tambahan (Direct Permissions)')
+                        ->relationship('permissions','name',
+                            function (Builder $query, Get $get) {
+                                // Ambil roles yang sedang dipilih
+                                $roles = Role::find($get('roles'));
+                                if (!$roles->count()) {
+                                    return $query;
+                                }
+                                // Ambil guard dari role pertama yang dipilih
+                                $guard = $roles->first()->guard_name;
+
+                                // Filter permission berdasarkan guard tersebut
+                                return $query->where('guard_name', $guard);
+                            }
+                        )
+                        ->searchable()
+                        ->multiple()
+                        ->preload(),
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(
@@ -94,7 +125,7 @@ class CreateUserDosenTendik extends CreateRecord
                         ->placeholder('Pilih salah satu pertanyaan keamanan')
                         ->searchPrompt('Ketik untuk mencari...'),
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
-                        ->label('Pertanyaan Keamanan 2')
+                    ->label('Pertanyaan Keamanan 2')
                         ->options(
                             PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
                             ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
@@ -106,10 +137,10 @@ class CreateUserDosenTendik extends CreateRecord
                         ->placeholder('Pilih salah satu pertanyaan keamanan')
                         ->searchPrompt('Ketik untuk mencari...'),
                     TextInput::make('a1')
-                    ->label('Jawaban Keamanan 1'),
+                        ->label('Jawaban Keamanan 1'),
                     TextInput::make('a2')
-                    ->label('Jawaban Keamanan 2'),
-            ])
+                        ->label('Jawaban Keamanan 2'),
+                ])
         ];
     }
 

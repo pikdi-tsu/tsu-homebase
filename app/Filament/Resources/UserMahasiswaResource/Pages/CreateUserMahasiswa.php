@@ -24,7 +24,9 @@ class CreateUserMahasiswa extends CreateRecord
                 ->schema([
                     Select::make('nim')
                         ->label('NIM - Nama Mahasiswa')
+                        ->placeholder('Pilih salah satu data Mahasiswa')
 //                        ->options(BackupUsersMahasiswa::all()->pluck('nama_lengkap_dan_nim', 'nim'))
+                        ->searchPrompt('Ketik NIM atau Nama untuk mencari...')
                         ->getSearchResultsUsing(function (string $search): array {
                             if (strlen($search) < 3) {
                                 return [];
@@ -40,12 +42,6 @@ class CreateUserMahasiswa extends CreateRecord
                         ->getOptionLabelUsing(function ($value): ?string {
                             return BackupUsersMahasiswa::where('nim', $value)->first()?->nama_lengkap_dan_nim;
                         })
-                        ->required()
-                        ->searchable()
-                        ->placeholder('Pilih salah satu data Mahasiswa')
-                        ->searchPrompt('Ketik NIM atau Nama untuk mencari...')
-                        ->preload()
-                        ->live(debounce: 250)
                         ->afterStateUpdated(function ($state, callable $set) {
                             if (is_null($state)) {
                                 $set('email', null);
@@ -59,12 +55,24 @@ class CreateUserMahasiswa extends CreateRecord
                             } else {
                                 $set('email', 'Email tidak ditemukan di data backup');
                             }
-                        }),
+                        })
+                        ->searchable(['nama', 'nim'])
+                        ->live(debounce: 250)
+                        ->preload()
+                        ->columnSpanFull()
+                        ->required(),
                     TextInput::make('email')
                         ->email()
                         ->maxLength(255)
                         ->readonly()
                         ->placeholder('Email akan terisi otomatis...'),
+                    Select::make('roles')
+                        ->label('Roles')
+                        ->multiple()
+                        ->relationship('roles', 'name')
+                        ->searchable()
+                        ->preload()
+                        ->required(),
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(

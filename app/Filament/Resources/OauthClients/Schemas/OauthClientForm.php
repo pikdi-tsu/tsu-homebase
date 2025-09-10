@@ -22,20 +22,20 @@ class OauthClientForm
                     ->label('Nama Modul/Aplikasi')
                     ->required()
                     ->columnSpanFull(),
-                Select::make('owner_type')
-                    ->label('Tipe Pemilik (Owner)')
-                    ->options([
-                        'App\\Models\\UserDosenTendik' => 'User Dosen/Tendik',
-                        'App\\Models\\Mahasiswa' => 'Mahasiswa',
-                    ])
-                    // Hanya muncul jika kondisi terpenuhi
-                    ->visible(fn ($get) => in_array('personal_access', $get('grant_types') ?? []))
-                    ->required(),
-                TextInput::make('owner_id')
-                    ->label('ID Pemilik (Owner)')
-                    // Hanya muncul jika kondisi terpenuhi
-                    ->visible(fn ($get) => in_array('personal_access', $get('grant_types') ?? []))
-                    ->required(),
+//                Select::make('owner_type')
+//                    ->label('Tipe Pemilik (Owner)')
+//                    ->options([
+//                        'App\\Models\\UserDosenTendik' => 'User Dosen/Tendik',
+//                        'App\\Models\\Mahasiswa' => 'Mahasiswa',
+//                    ])
+//                    // Hanya muncul jika kondisi terpenuhi
+//                    ->visible(fn ($get) => in_array('personal_access', $get('grant_types') ?? []))
+//                    ->required(),
+//                TextInput::make('owner_id')
+//                    ->label('ID Pemilik (Owner)')
+//                    // Hanya muncul jika kondisi terpenuhi
+//                    ->visible(fn ($get) => in_array('personal_access', $get('grant_types') ?? []))
+//                    ->required(),
                 Select::make('grant_types')
                     ->label('Tipe Akses yang Diizinkan')
                     ->placeholder('Pilih Satu atau Lebih Tipe Akses')
@@ -52,6 +52,11 @@ class OauthClientForm
                     ->label('URL Redirect')
                     ->placeholder('Masukkan URL lalu tekan Enter')
                     ->required(),
+                TagsInput::make('scopes')
+                    ->label('Scopes (Izin)')
+                    ->placeholder('Ketik scope baru lalu tekan Enter')
+                    ->helperText('Contoh: view-users create-users. Pisahkan dengan spasi jika meminta token.')
+                    ->columnSpanFull(),
                 Placeholder::make('grant_type_descriptions')
                     ->label('Deskripsi Tipe Akses:')
                     ->content(new HtmlString(

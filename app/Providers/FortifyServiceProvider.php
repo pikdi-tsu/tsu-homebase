@@ -8,6 +8,7 @@ use App\Actions\Fortify\UpdateUserPassword;
 use App\Actions\Fortify\UpdateUserProfileInformation;
 use Illuminate\Cache\RateLimiting\Limit;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\RateLimiter;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Support\Str;
@@ -49,10 +50,18 @@ class FortifyServiceProvider extends ServiceProvider
         $this->app->singleton(LoginResponse::class, function ($app) {
             return new class implements LoginResponse {
                 public function toResponse($request) {
-                    if (auth()->user()->hasRole('admin|super-admin')) {
+                    if (auth()->user()->hasRole('admin|super admin')) {
                         return redirect()->intended('/admin');
                     }
-                    return redirect()->intended(config('fortify.home'));
+                    // Langsung logout user tersebut
+                    Auth::logout();
+
+                    // Tambahkan notifikasi error ke session
+                    $request->session()->flash('error', 'Anda tidak memiliki hak akses untuk masuk ke sistem ini.');
+
+                    // Kembalikan ke halaman login
+                    return redirect()->route('login');
+//                    return redirect()->intended(config('fortify.home'));
                 }
             };
         });

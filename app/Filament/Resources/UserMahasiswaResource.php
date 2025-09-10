@@ -18,8 +18,10 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
+use Illuminate\Support\Facades\Auth;
 
 class UserMahasiswaResource extends Resource
 {
@@ -31,18 +33,45 @@ class UserMahasiswaResource extends Resource
     protected static ?string $modelLabel = 'User Mahasiswa';
     protected static ?string $pluralModelLabel = 'User Mahasiswa';
 
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('homebase:user-mahasiswa:view-any');
+    }
+
+    public static function canCreate(): bool
+    {
+        return Auth::user()->can('homebase:user-mahasiswa:create');
+    }
+
+    public static function canEdit(Model $record): bool
+    {
+        return Auth::user()->can('homebase:user-mahasiswa:update');
+    }
+
+    public static function canDelete(Model $record): bool
+    {
+        return Auth::user()->can('homebase:user-mahasiswa:delete');
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
             ->components([
                 TextInput::make('name')
                     ->label('nama mahasiswa')
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->columnSpanFull()
+                    ->required(),
                 TextInput::make('email')
                     ->email()
-                    ->required()
-                    ->maxLength(255),
+                    ->maxLength(255)
+                    ->required(),
+                Select::make('roles')
+                    ->label('Jabatan (Roles)')
+                    ->multiple()
+                    ->relationship('roles', 'name')
+                    ->searchable()
+                    ->preload(),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
@@ -88,19 +117,28 @@ class UserMahasiswaResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
-                TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
+                TextColumn::make('roles.name')
+                    ->label('Roles')
+                    ->badge()
+                    ->placeholder('Belum di set')
+                    ->searchable(),
+                TextColumn::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
+                    ->placeholder('Belum di set')
                     ->searchable(),
                 TextColumn::make('a1')
                     ->label('Jawaban Keamanan 1')
+                    ->placeholder('Belum di set')
                     ->searchable(),
-                TextColumn::make('pertanyaanKeamananDua.pertanyaan')
+                TextColumn::make('q2')
                     ->label('Pertanyaan Keamanan 2')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
+                    ->placeholder('Belum di set')
                     ->searchable(),
                 TextColumn::make('a2')
                     ->label('Jawaban Keamanan 2')
+                    ->placeholder('Belum di set')
                     ->searchable(),
             ])
             ->filters([

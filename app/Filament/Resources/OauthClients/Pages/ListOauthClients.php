@@ -26,7 +26,7 @@ class ListOauthClients extends ListRecords
                 ->modalCancelActionLabel('Batal')
                 ->using(function (array $data): Model {
                     $name = ['name'];
-                    $data['id'] = (string) Str::orderedUuid();
+//                    $data['id'] = (string) Str::orderedUuid();
                     $secret = Str::random(40);
                     $data['secret'] = $secret;
                     $data['provider'] = 'users';

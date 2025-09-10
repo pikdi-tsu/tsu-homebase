@@ -22,3 +22,13 @@ Route::get('/logout', function () {
     session()->regenerateToken();
     return redirect('/');
 })->name('logout');
+
+Route::get('/admin/{any}', function () {
+    // Skenario 1: Jika user belum login (guest)
+    if (Auth::guest()) {
+        return redirect()->route('login');
+    }
+    // Skenario 2: Jika user sudah login (tapi bukan admin)
+//    return redirect()->route('dashboard');
+
+})->where('any', '.*')->name('admin.fallback'); // Beri nama untuk jaga-jaga
