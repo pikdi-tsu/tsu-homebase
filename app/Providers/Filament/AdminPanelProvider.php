@@ -34,6 +34,9 @@ class AdminPanelProvider extends PanelProvider
             ->default()
             ->id('admin')
             ->path('admin')
+            ->favicon(asset('images/favicon/favicon.ico'))
+            ->viteTheme('resources/css/filament/admin/theme.css')
+//            ->viteTheme('resources/css/app.css')
             ->userMenuItems([
                 'logout' => MenuItem::make()
                     ->label('Log Out')
@@ -41,9 +44,14 @@ class AdminPanelProvider extends PanelProvider
                     ->icon('heroicon-o-arrow-left-on-rectangle'),
             ])
             ->colors([
-                'primary' => Color::Amber,
+                'primary' => Color::hex('#1A828F'), // <-- TSU Teal
+                'secondary' => Color::hex('#F5B947'), // <-- TSU Mustard Gold
+                'danger'  => Color::Red,
+                'gray'    => Color::Slate, // <-- Kita pakai keluarga warna Slate untuk netral
+                'info'    => Color::Blue,
+                'success' => Color::Green,
+                'warning' => Color::Amber,
             ])
-            ->favicon('images/icon-logo-tsu.png')
             ->brandName('TSU Homebase')
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')

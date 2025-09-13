@@ -24,6 +24,7 @@ class RolesTable
                 TextColumn::make('permissions.name')
                     ->label('Permissions')
                     ->badge()
+                    ->color('secondary')
                     ->placeholder('Belum di set')
                     ->listWithLineBreaks()
                     ->limitList(2)
@@ -42,6 +43,7 @@ class RolesTable
             ])
             ->recordActions([
                 EditAction::make()
+                    ->color('secondary')
                     ->successNotificationTitle('Role berhasil di update')
                     ->hidden(fn (Role $record): bool => $record->name === 'super admin'),
             ])

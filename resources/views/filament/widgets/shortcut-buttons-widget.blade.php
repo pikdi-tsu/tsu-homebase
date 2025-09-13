@@ -6,21 +6,21 @@
 
         <div class="flex space-x-4">
             <x-filament::button
-                style="background-color: #0a6b7f; color: white"
+                style="margin: 5px"
+                color="secondary"
                 tag="a"
                 href="{{ \App\Filament\Resources\UserDosenTendikResource::getUrl('index') }}?action=create"
                 icon="fas-user-plus"
-                color="white"
             >
                 Tambah User Dosen/Tendik
             </x-filament::button>
 
             <x-filament::button
-                style="background-color: #f9be20; color: black"
+                style="margin: 5px"
+                color="secondary"
                 tag="a"
                 href="{{ \App\Filament\Resources\UserMahasiswaResource::getUrl('index') }}?action=create"
                 icon="fas-user-plus"
-                color="black"
             >
                 Tambah Mahasiswa
             </x-filament::button>

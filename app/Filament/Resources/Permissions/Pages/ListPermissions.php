@@ -16,6 +16,7 @@ class ListPermissions extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Permission')
+                ->color('secondary')
                 ->modalHeading('Tambah Permission')
                 ->modalSubmitActionLabel('Simpan')
                 ->modalCancelActionLabel('Batal')

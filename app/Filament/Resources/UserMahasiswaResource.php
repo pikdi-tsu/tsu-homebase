@@ -32,6 +32,12 @@ class UserMahasiswaResource extends Resource
     protected static ?string $navigationLabel = 'User Mahasiswa';
     protected static ?string $modelLabel = 'User Mahasiswa';
     protected static ?string $pluralModelLabel = 'User Mahasiswa';
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nim', 'name', 'email'];
+    }
 
     public static function canViewAny(): bool
     {
@@ -120,8 +126,19 @@ class UserMahasiswaResource extends Resource
                 TextColumn::make('roles.name')
                     ->label('Roles')
                     ->badge()
+                    ->color('secondary')
                     ->placeholder('Belum di set')
                     ->searchable(),
+                TextColumn::make('permissions.name')
+                    ->label('Izin Tambahan')
+                    ->badge()
+                    ->placeholder('Tidak ada izin tambahan')
+                    ->color('success') // Beri warna berbeda agar mudah dibedakan dari roles
+                    ->limit(3)
+                    ->tooltip(function (Model $record): string {
+                        // Spatie 'permissions' relationship hanya mengambil direct permissions
+                        return $record->permissions->pluck('name')->implode(', ');
+                    }),
                 TextColumn::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
@@ -145,7 +162,8 @@ class UserMahasiswaResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->color('warning'),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([

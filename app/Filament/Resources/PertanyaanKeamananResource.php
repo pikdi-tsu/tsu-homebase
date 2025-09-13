@@ -31,7 +31,12 @@ class PertanyaanKeamananResource extends Resource
     protected static ?string $modelLabel = 'Pertanyaan Keamanan';
 
     protected static ?string $pluralModelLabel = 'Pertanyaan Keamanan';
+    protected static ?string $recordTitleAttribute = 'pertanyaan';
 
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['jenis', 'pertanyaan'];
+    }
 
     public static function form(Schema $schema): Schema
     {
@@ -72,6 +77,7 @@ class PertanyaanKeamananResource extends Resource
             ->recordActions([
                 EditAction::make()
                     ->label('Edit')
+                    ->color('secondary')
                     ->modalHeading('Edit Pertanyaan Keamanan')
                     ->modalSubmitActionLabel('Simpan')
                     ->modalCancelActionLabel('Batal')

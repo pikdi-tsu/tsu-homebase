@@ -17,4 +17,15 @@ class EditUserMahasiswa extends EditRecord
             DeleteAction::make(),
         ];
     }
+
+    protected function getFormActions(): array
+    {
+        $actions = parent::getFormActions();
+
+        if (isset($actions[0])) {
+            $actions[0]->color('secondary');
+        }
+
+        return $actions;
+    }
 }

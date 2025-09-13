@@ -20,6 +20,7 @@ class ListOauthClients extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Oauth')
+                ->color('secondary')
                 ->modalHeading('Tambah Oauth')
                 ->modalSubmitActionLabel('Simpan')
                 ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi'))

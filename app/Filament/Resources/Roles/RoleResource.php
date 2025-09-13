@@ -21,12 +21,17 @@ class RoleResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentCheck;
 
-    protected static ?string $recordTitleAttribute = 'Role';
+    protected static ?string $recordTitleAttribute = 'name';
 
-//    public static function canViewAny(): bool
-//    {
-//        return Auth::user()->can('homebase:role:manage');
-//    }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'guard_name'];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('homebase:role:manage');
+    }
 
     public static function form(Schema $schema): Schema
     {

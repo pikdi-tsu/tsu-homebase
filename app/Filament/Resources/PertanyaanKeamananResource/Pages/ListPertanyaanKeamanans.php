@@ -17,6 +17,7 @@ class ListPertanyaanKeamanans extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah Pertanyaan Keamanan')
+                ->color('secondary')
                 ->modalHeading('Tambah Pertanyaan Keamanan')
                 ->modalSubmitActionLabel('Simpan')
                 ->modalCancelActionLabel('Batal')

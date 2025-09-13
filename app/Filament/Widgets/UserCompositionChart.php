@@ -29,8 +29,12 @@ class UserCompositionChart extends ChartWidget
                     'label' => 'Jumlah Pengguna',
                     'data' => [$dosenTendikCount, $mahasiswaCount],
                     'backgroundColor' => [
-                        'rgb(10, 107, 127)',  // Warna untuk Dosen (merah)
-                        'rgb(249, 190, 32)', // Warna untuk Mahasiswa (biru)
+                        'rgb(26, 130, 143)', // <-- Warna TSU Teal untuk 'Dosen & Tendik'
+                        'rgb(245, 185, 71)', // <-- Warna Mustard Gold untuk 'Mahasiswa'
+                    ],
+                    'hoverBackgroundColor' => [
+                        'rgb(22, 111, 122)', // TSU Teal sedikit lebih gelap
+                        'rgb(221, 166, 64)', // Mustard Gold sedikit lebih gelap
                     ],
                 ],
             ],

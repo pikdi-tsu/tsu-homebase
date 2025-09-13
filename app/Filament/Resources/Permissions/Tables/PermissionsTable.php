@@ -29,6 +29,7 @@ class PermissionsTable
             ->recordActions([
                 EditAction::make()
                     ->modalHeading('Edit Permission')
+                    ->color('secondary')
                     ->modalSubmitActionLabel('Simpan')
                     ->modalCancelActionLabel('Batal')
                     ->successNotificationTitle('Permission berhasil di update'),

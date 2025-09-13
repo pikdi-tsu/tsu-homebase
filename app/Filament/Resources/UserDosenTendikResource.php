@@ -37,10 +37,17 @@ use Spatie\Permission\Models\Role;
 class UserDosenTendikResource extends Resource
 {
     protected static ?string $model = UserDosenTendik::class;
+
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-users';
     protected static ?string $navigationLabel = 'User Dosen & Tendik';
     protected static ?string $modelLabel = 'User Dosen & Tendik';
     protected static ?string $pluralModelLabel = 'User Dosen & Tendik';
+    protected static ?string $recordTitleAttribute = 'name';
+
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['nik', 'name', 'email'];
+    }
 
     /**
      * Menentukan apakah user bisa melihat daftar resource ini di navigasi.
@@ -178,6 +185,7 @@ class UserDosenTendikResource extends Resource
                     ->label('Jabatan (Roles)')
                     ->placeholder('Tidak ada role')
                     ->badge()
+                    ->color('secondary')
                     ->searchable(),
                 TextColumn::make('permissions.name')
                     ->label('Izin Tambahan')
@@ -212,9 +220,11 @@ class UserDosenTendikResource extends Resource
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->color('warning'),
                 Action::make('createToken')
                     ->label('Buat Token API Pribadi')
+                    ->color('danger')
                     ->icon('heroicon-o-key')
                     // Aksi ini akan memunculkan modal dengan form
                     ->schema([

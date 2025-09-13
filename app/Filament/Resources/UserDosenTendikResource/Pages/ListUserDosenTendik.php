@@ -4,6 +4,7 @@ namespace App\Filament\Resources\UserDosenTendikResource\Pages;
 
 use App\Models\BackupUsersDosenTendik;
 use App\Services\DefaultPasswordService;
+use App\Traits\HasAccentCreateAction;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use App\Filament\Resources\UserDosenTendikResource;
@@ -29,6 +30,7 @@ class ListUserDosenTendik extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah User Dosen/Tendik')
+                ->color('secondary')
                 ->modalHeading('Tambah User Dosen/Tendik')
                 ->schema(CreateUserDosenTendik::getCreateFormSchema())
                 ->modalSubmitActionLabel('Simpan')

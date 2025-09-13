@@ -21,4 +21,15 @@ class EditUserDosenTendik extends EditRecord
     {
         return static::getResource()::getUrl('index');
     }
+
+    protected function getFormActions(): array
+    {
+        $actions = parent::getFormActions();
+
+        if (isset($actions[0])) {
+            $actions[0]->color('secondary');
+        }
+
+        return $actions;
+    }
 }

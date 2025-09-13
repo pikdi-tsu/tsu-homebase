@@ -33,18 +33,23 @@ class OauthClientsTable
                     ->toggleable(isToggledHiddenByDefault: true),
                 TextColumn::make('grant_types')
                     ->label('Tipe Grant')
-                    ->badge(),
+                    ->badge()
+                    ->color('secondary'),
                 ToggleColumn::make('revoked')
-                    ->label('Akses Dicabut'),
+                    ->label('Akses Dicabut')
+                    ->onColor('success')
+                    ->offColor('danger'),
             ])
             ->filters([
                 //
             ])
             ->recordActions([
-                EditAction::make(),
+                EditAction::make()
+                    ->color('warning'),
 
                 Action::make('regenerateSecret')
                     ->label('Regenerate Secret')
+                    ->color('danger')
                     ->icon('heroicon-o-arrow-path')
                     ->color('danger') // Beri warna bahaya agar tidak sembarang diklik
                     ->requiresConfirmation() // Minta konfirmasi

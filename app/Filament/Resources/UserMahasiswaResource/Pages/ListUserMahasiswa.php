@@ -31,6 +31,7 @@ class ListUserMahasiswa extends ListRecords
         return [
             CreateAction::make()
                 ->label('Tambah User Mahasiswa')
+                ->color('secondary')
                 ->modalHeading('Tambah User Mahasiswa')
                 ->schema(CreateUserMahasiswa::getCreateFormSchema())
                 ->modalSubmitActionLabel('Simpan')

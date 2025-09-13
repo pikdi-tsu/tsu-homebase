@@ -21,12 +21,17 @@ class PermissionResource extends Resource
 
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedClipboardDocumentList;
 
-    protected static ?string $recordTitleAttribute = 'Permission';
+    protected static ?string $recordTitleAttribute = 'name';
 
-//    public static function canViewAny(): bool
-//    {
-//        return Auth::user()->can('homebase:permission:manage');
-//    }
+    public static function getGloballySearchableAttributes(): array
+    {
+        return ['name', 'guard_name'];
+    }
+
+    public static function canViewAny(): bool
+    {
+        return Auth::user()->can('homebase:permission:manage');
+    }
 
     public static function form(Schema $schema): Schema
     {
