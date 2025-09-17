@@ -2,33 +2,46 @@
 
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome');
-});
+//Route::get('/', static function () {
+//    return view('welcome');
+//});
+
+Route::get('/', static fn() => redirect()->route('dashboard'));
+//Route::get('/', static function () {
+//    return view('dashboard');
+//});
+
+Route::get('/dashboard', static function () {
+    return view('dashboard');
+})->name('dashboard');
+
+//Route::get('/login', static function () {
+//    return redirect()->route('login');
+//})->name('login');
 
 Route::middleware([
     'auth:sanctum',
     config('jetstream.auth_session'),
     'verified',
 ])->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    //
 });
 
-Route::get('/logout', function () {
-    auth()->logout();
-    session()->invalidate();
-    session()->regenerateToken();
-    return redirect('/');
-})->name('logout');
+Route::get('/logout', static function () {
+    Auth::logout();
 
-Route::get('/admin/{any}', function () {
+    Session::invalidate();
+    Session::regenerateToken();
+
+    return redirect('/');
+})->name('logout')->middleware('auth');
+
+Route::get('/admin/{any}', static function () {
     // Skenario 1: Jika user belum login (guest)
     if (Auth::guest()) {
         return redirect()->route('login');
     }
     // Skenario 2: Jika user sudah login (tapi bukan admin)
-//    return redirect()->route('dashboard');
+    return redirect()->route('dashboard');
 
 })->where('any', '.*')->name('admin.fallback'); // Beri nama untuk jaga-jaga
