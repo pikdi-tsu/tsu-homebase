@@ -3,10 +3,8 @@
 namespace App\Providers;
 
 use App\Listeners\CheckUserRoleAfterLogin;
-use Filament\Support\Colors\Color;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
-use Filament\Support\Facades\FilamentColor;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;

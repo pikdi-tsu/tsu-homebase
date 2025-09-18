@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\UserDosenTendik;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Str;
 use Laravel\Jetstream\Features;
@@ -20,7 +20,7 @@ class DeleteApiTokenTest extends TestCase
             $this->markTestSkipped('API support is not enabled.');
         }
 
-        $this->actingAs($user = UserDosenTendik::factory()->withPersonalTeam()->create());
+        $this->actingAs($user = User::factory()->withPersonalTeam()->create());
 
         $token = $user->tokens()->create([
             'name' => 'Test Token',

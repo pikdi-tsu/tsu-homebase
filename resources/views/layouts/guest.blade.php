@@ -22,6 +22,7 @@
         <link rel="manifest" href="{{ asset('images/favicon/site.webmanifest') }}" />
 
         <!-- Scripts -->
+        <x-head-theme-script />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
 
         <!-- Styles -->

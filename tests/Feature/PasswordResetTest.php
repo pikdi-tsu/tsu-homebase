@@ -2,7 +2,7 @@
 
 namespace Tests\Feature;
 
-use App\Models\UserDosenTendik;
+use App\Models\User;
 use Illuminate\Auth\Notifications\ResetPassword;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Notification;
@@ -32,7 +32,7 @@ class PasswordResetTest extends TestCase
 
         Notification::fake();
 
-        $user = UserDosenTendik::factory()->create();
+        $user = User::factory()->create();
 
         $this->post('/forgot-password', [
             'email' => $user->email,
@@ -49,7 +49,7 @@ class PasswordResetTest extends TestCase
 
         Notification::fake();
 
-        $user = UserDosenTendik::factory()->create();
+        $user = User::factory()->create();
 
         $this->post('/forgot-password', [
             'email' => $user->email,
@@ -72,7 +72,7 @@ class PasswordResetTest extends TestCase
 
         Notification::fake();
 
-        $user = UserDosenTendik::factory()->create();
+        $user = User::factory()->create();
 
         $this->post('/forgot-password', [
             'email' => $user->email,

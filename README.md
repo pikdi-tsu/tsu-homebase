@@ -1,106 +1,61 @@
+<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
 
-## 🚀 Tentang Proyek Ini
+<p align="center">
+<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
+<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
+</p>
 
-Selamat datang di homebase TSU Project System! Repositori ini adalah pusat pengembangan untuk sistem manajemen pengguna internal kita. Tujuan utama dari proyek ini adalah untuk menyediakan platform yang solid dan mudah dikelola untuk semua hal yang berkaitan dengan pengguna di dalam sistem TSU.
+## About Laravel
 
-Proyek ini dibangun untuk memudahkan kolaborasi tim dan memastikan semua anggota tim punya akses ke codebase yang terpusat dan terorganisir.
+Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
 
----
-## 🛠️ Teknologi yang Digunakan
+- [Simple, fast routing engine](https://laravel.com/docs/routing).
+- [Powerful dependency injection container](https://laravel.com/docs/container).
+- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
+- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
+- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
+- [Robust background job processing](https://laravel.com/docs/queues).
+- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
 
-Proyek ini dibangun menggunakan Laravel 12 sebagai framework utamanya. Untuk mempercepat pengembangan dan memastikan fungsionalitas yang modern, kami mengandalkan beberapa package hebat berikut:
+Laravel is accessible, powerful, and provides tools required for large, robust applications.
 
-- Laravel Jetstream dengan Livewire: Digunakan sebagai sistem otentikasi dan manajemen tim. Fitur seperti registrasi, login, manajemen profil, dan fungsionalitas tim sudah tersedia secara out-of-the-box.
-- Spatie/laravel-permission: Package ini dipakai untuk mengelola roles dan permissions secara dinamis. Ini memungkinkan kita untuk mengatur hak akses pengguna dengan sangat fleksibel.
-- Filament: Digunakan untuk membangun panel admin yang cantik dan fungsional dengan cepat. Filament membantu kita membuat antarmuka admin untuk mengelola data tanpa perlu menulis banyak boilerplate code.
+## Learning Laravel
 
----
-## 🏁 Memulai Proyek
+Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
 
-Untuk menjalankan proyek ini di lingkungan lokal, ikuti langkah-langkah berikut:
+You may also try the [Laravel Bootcamp](https://bootcamp.laravel.com), where you will be guided through building a modern Laravel application from scratch.
 
-1. Clone repository ini:
+If you don't feel like reading, [Laracasts](https://laracasts.com) can help. Laracasts contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
 
-Pilih salah satu metode di bawah ini sesuai dengan preferensi dan konfigurasimu.
+## Laravel Sponsors
 
-<details>
-<summary><strong>Pilih metode clone (klik untuk membuka)</strong></summary>
+We would like to extend our thanks to the following sponsors for funding Laravel development. If you are interested in becoming a sponsor, please visit the [Laravel Partners program](https://partners.laravel.com).
 
-- Opsi 1: HTTPS
+### Premium Partners
 
-  Gunakan metode ini jika ingin menggunakan username dan password (atau Personal Access Token) untuk otentikasi.
+- **[Vehikl](https://vehikl.com)**
+- **[Tighten Co.](https://tighten.co)**
+- **[Kirschbaum Development Group](https://kirschbaumdevelopment.com)**
+- **[64 Robots](https://64robots.com)**
+- **[Curotec](https://www.curotec.com/services/technologies/laravel)**
+- **[DevSquad](https://devsquad.com/hire-laravel-developers)**
+- **[Redberry](https://redberry.international/laravel-development)**
+- **[Active Logic](https://activelogic.com)**
 
-  ```Bash
-  git clone https://github.com/AncaSea/tsu-homebase.git
-  ```
+## Contributing
 
-- Opsi 2: SSH
+Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
 
-  Gunakan metode ini jika sudah mengatur SSH key di akun Git-mu.
+## Code of Conduct
 
-  ```Bash
-  git clone git@github.com:your_username/tsu-homebase.git
-  ```
+In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
 
-- Opsi 3: Personal Access Token (PAT)
+## Security Vulnerabilities
 
-  Jika menggunakan Two-Factor Authentication (2FA) atau organisasi mewajibkan PAT.
+If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
 
-  ```Bash
-  git clone https://your_PAT@github.com/username/AncaSea/tsu-homebase.git
-  ```
+## License
 
-</details>
-
-2. Masuk ke direktori proyek:
-
-```Bash
-cd tsu-project-system
-```
-
-3. Install dependencies Composer dan npm:
-
-```Bash
-composer install
-npm install
-```
-
-4. Jalankan npm run build&dev:
-
-```bash
-npm run build
-npm run dev
-```
-
-4. Salin file .env.example menjadi .env:
-
-```Bash
-cp .env.example .env
-```
-
-5. Generate application key:
-
-```Bash
-php artisan key:generate
-```
-
-6. Konfigurasi database di file .env
-
-   >Disarankan menggunakan **postgresql**
-
-7. Jalankan migrasi database:
-
-```Bash
-php artisan migrate
-```
-
-8. Jalankan server pengembangan:
-
-```Bash
-php artisan serve
-```
-
-Sekarang, proyek sudah bisa diakses di http://localhost:8000.
-
-## 🤝 Tim Kami
-Proyek ini dikelola dan dikembangkan oleh tim IT TSU. Jika ada pertanyaan atau butuh diskusi lebih lanjut, jangan ragu untuk menghubungi anggota tim lainnya!
+The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
