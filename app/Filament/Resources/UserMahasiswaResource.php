@@ -172,6 +172,11 @@ class UserMahasiswaResource extends Resource
             ]);
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        return parent::getEloquentQuery()->with(['roles', 'permissions']);
+    }
+
     public static function getRelations(): array
     {
         return [

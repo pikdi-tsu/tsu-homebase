@@ -35,6 +35,7 @@ class AdminPanelProvider extends PanelProvider
             ->id('admin')
             ->path('admin')
             ->brandName('TSU Homebase')
+            ->favicon(asset('images/favicon/favicon.ico'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->userMenuItems([
                 'logout' => MenuItem::make()

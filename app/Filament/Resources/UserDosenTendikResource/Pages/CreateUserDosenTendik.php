@@ -14,6 +14,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class CreateUserDosenTendik extends CreateRecord
@@ -90,28 +91,19 @@ class CreateUserDosenTendik extends CreateRecord
                         ->label('Jabatan (Roles)')
                         ->multiple()
                         ->relationship('roles', 'name')
+                        ->getOptionLabelFromRecordUsing(fn (Role $record) => "{$record->name} ({$record->guard_name})")
                         ->searchable()
                         ->preload()
+                        ->helperText('Format: Nama Roles (guard)')
                         ->required(),
                     Select::make('permissions')
                         ->label('Izin Tambahan (Direct Permissions)')
-                        ->relationship('permissions','name',
-                            function (Builder $query, Get $get) {
-                                // Ambil roles yang sedang dipilih
-                                $roles = Role::find($get('roles'));
-                                if (!$roles->count()) {
-                                    return $query;
-                                }
-                                // Ambil guard dari role pertama yang dipilih
-                                $guard = $roles->first()->guard_name;
-
-                                // Filter permission berdasarkan guard tersebut
-                                return $query->where('guard_name', $guard);
-                            }
-                        )
-                        ->searchable()
                         ->multiple()
-                        ->preload(),
+                        ->relationship('permissions', 'name')
+                        ->getOptionLabelFromRecordUsing(fn (Permission $record) => "{$record->name} ({$record->guard_name})")
+                        ->searchable()
+                        ->preload()
+                        ->helperText('Format: Nama Permission (guard)'),
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(

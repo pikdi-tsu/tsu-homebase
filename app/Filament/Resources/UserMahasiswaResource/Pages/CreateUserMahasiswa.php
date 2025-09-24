@@ -10,7 +10,11 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
+use Illuminate\Database\Eloquent\Builder;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class CreateUserMahasiswa extends CreateRecord
 {
@@ -65,14 +69,25 @@ class CreateUserMahasiswa extends CreateRecord
                         ->email()
                         ->maxLength(255)
                         ->readonly()
+                        ->columnSpanFull()
                         ->placeholder('Email akan terisi otomatis...'),
                     Select::make('roles')
                         ->label('Roles')
                         ->multiple()
                         ->relationship('roles', 'name')
+                        ->getOptionLabelFromRecordUsing(fn (Role $record) => "{$record->name} ({$record->guard_name})")
                         ->searchable()
                         ->preload()
+                        ->helperText('Format: Nama Roles (guard)')
                         ->required(),
+                    Select::make('permissions')
+                        ->label('Izin Tambahan (Direct Permissions)')
+                        ->relationship('permissions','name')
+                        ->getOptionLabelFromRecordUsing(fn (Permission $record) => "{$record->name} ({$record->guard_name})")
+                        ->searchable()
+                        ->multiple()
+                        ->preload()
+                        ->helperText('Format: Nama Permission (guard)'),
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(

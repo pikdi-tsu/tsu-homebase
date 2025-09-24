@@ -29,9 +29,9 @@ class RolesTable
                     ->listWithLineBreaks()
                     ->limitList(2)
                     ->expandableLimitedList()
-                    ->tooltip(function (Model $record): string {
-                        return $record->permissions->pluck('name')->implode(', ');
-                    })
+//                    ->tooltip(function (Model $record): string {
+//                        return $record->permissions->pluck('name')->implode(', ');
+//                    })
                     ->searchable(),
                 TextColumn::make('guard_name')
                     ->searchable(),

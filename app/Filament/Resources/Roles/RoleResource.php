@@ -12,6 +12,7 @@ use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Support\Icons\Heroicon;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Support\Facades\Auth;
 use Spatie\Permission\Models\Role;
 
@@ -41,6 +42,13 @@ class RoleResource extends Resource
     public static function table(Table $table): Table
     {
         return RolesTable::configure($table);
+    }
+
+    public static function getEloquentQuery(): Builder
+    {
+        // Eager load relasi 'permissions' untuk setiap role
+        // Relasi dari Role ke Permission di package Spatie bernama 'permissions'
+        return parent::getEloquentQuery()->with('permissions');
     }
 
     public static function getRelations(): array

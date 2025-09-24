@@ -93,6 +93,12 @@ class UserDosenTendikResource extends Resource
         return Auth::user()->can('homebase:user-dosen-tendik:delete');
     }
 
+    public static function getEloquentQuery(): Builder
+    {
+        // Kita eager load 'roles' dan 'permissions' sekaligus
+        return parent::getEloquentQuery()->with(['roles', 'permissions']);
+    }
+
     public static function form(Schema $schema): Schema
     {
         return $schema
@@ -143,6 +149,7 @@ class UserDosenTendikResource extends Resource
                     )
                     ->placeholder('Belum di set')
                     ->searchable()
+                    ->preload()
                     ->required(),
                 Select::make('q2')
                 ->label('Pertanyaan Keamanan 2')
@@ -155,6 +162,7 @@ class UserDosenTendikResource extends Resource
                     )
                     ->placeholder('Belum di set')
                     ->searchable()
+                    ->preload()
                     ->required(),
                 TextInput::make('a1')
                     ->label('Jawaban Keamanan 1')
