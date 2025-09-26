@@ -1,18 +1,23 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-
-//Route::get('/', static function () {
-//    return view('welcome');
-//});
+use App\Livewire\HealthStatusPage;
+use Spatie\Health\Models\HealthCheckResultHistoryItem;
 
 Route::get('/', static fn() => redirect()->route('dashboard'));
-//Route::get('/', static function () {
-//    return view('dashboard');
-//});
 
-Route::get('/dashboard', static function () {
-    return view('dashboard');
+Route::get('/dashboard', function () {
+    // 1. Dapatkan UUID dari batch pemeriksaan terakhir
+    $latestBatch = HealthCheckResultHistoryItem::query()->latest()->value('batch');
+
+    // 2. Dapatkan semua hasil pemeriksaan dari batch terakhir tersebut
+    $latestChecks = HealthCheckResultHistoryItem::query()->where('batch', $latestBatch)->get();
+
+    // 3. Cek apakah ada status yang 'failed' di dalam batch terakhir
+    //    Tanda '!' di depan berarti "tidak ada yang failed"
+    $isSystemOk = !$latestChecks->contains(fn ($check) => $check->status !== 'ok');
+
+    return view('dashboard', ['isSystemOk' => $isSystemOk]);
 })->name('dashboard');
 
 //Route::get('/login', static function () {
@@ -45,3 +50,7 @@ Route::get('/admin/{any}', static function () {
     return redirect()->route('dashboard');
 
 })->where('any', '.*')->name('admin.fallback'); // Beri nama untuk jaga-jaga
+
+Route::get('/status-sistem', HealthStatusPage::class)
+    ->middleware('auth')
+    ->name('health.status');

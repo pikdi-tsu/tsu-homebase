@@ -23,6 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
+        // 1. Handler untuk Database Down (QueryException)
+        $exceptions->renderable(function (\Illuminate\Database\QueryException $e, $request) {
+            // Tampilkan halaman error khusus jika database down
+            return response()->view('errors.database_down', [], 503);
+        });
+
+        // 2. Handler untuk Akses Ditolak (403 Forbidden)
         $exceptions->renderable(function (HttpException $e, $request) {
             // Cek apakah status kodenya adalah 403 (Forbidden)
             if ($e->getStatusCode() === 403) {

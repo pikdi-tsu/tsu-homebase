@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use App\Health\IndonesianWindowsDiskSpaceCheck;
 use App\Listeners\CheckUserRoleAfterLogin;
 use Filament\Support\Assets\Js;
 use Filament\Support\Facades\FilamentAsset;
@@ -10,6 +11,13 @@ use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 use Laravel\Passport\Passport;
+use Spatie\Health\Checks\Checks\CacheCheck;
+use Spatie\Health\Checks\Checks\DatabaseCheck;
+use Spatie\Health\Checks\Checks\DebugModeCheck;
+use Spatie\Health\Checks\Checks\EnvironmentCheck;
+use Spatie\Health\Checks\Checks\ScheduleCheck;
+use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
+use Spatie\Health\Facades\Health;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -26,7 +34,7 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        Gate::before(function ($user, $ability) {
+        Gate::before(static function ($user, $ability) {
             // Ganti 'admin' dengan nama role super admin Anda jika berbeda
             return $user->hasRole('super admin') ? true : null;
         });
@@ -44,6 +52,18 @@ class AppServiceProvider extends ServiceProvider
 
         FilamentAsset::register([
             Js::make('custom-filament', __DIR__ . '/../../resources/js/custom-filament.js'),
+        ]);
+
+        Health::checks([
+            ScheduleCheck::new(),
+            DatabaseCheck::new(),
+            CacheCheck::new(),
+            DebugModeCheck::new(),
+            EnvironmentCheck::new(),
+//            UsedDiskSpaceCheck::new(),
+            IndonesianWindowsDiskSpaceCheck::new()
+                ->warnWhenUsedSpaceIsAbovePercentage(60)
+                ->failWhenUsedSpaceIsAbovePercentage(85),
         ]);
     }
 }

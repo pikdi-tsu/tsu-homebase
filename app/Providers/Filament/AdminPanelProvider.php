@@ -7,11 +7,13 @@ use App\Filament\Widgets\LastLoggedInUsersMahasiswaWidget;
 use App\Filament\Widgets\LatestUsersDosenTendikWidget;
 use App\Filament\Widgets\LatestUsersMahasiswaWidget;
 use App\Filament\Widgets\UserStatsOverview;
+use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\AuthenticateSession;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
 use Filament\Navigation\MenuItem;
+use Filament\Navigation\NavigationItem;
 use Filament\Pages\Dashboard;
 use Filament\Panel;
 use Filament\PanelProvider;
@@ -38,7 +40,16 @@ class AdminPanelProvider extends PanelProvider
             ->favicon(asset('images/favicon/favicon.ico'))
             ->viteTheme('resources/css/filament/admin/theme.css')
             ->userMenuItems([
-                'logout' => MenuItem::make()
+                Action::make('user-name')
+                    ->label(fn (): string => auth()->user()?->name ?? '')
+                    ->icon('heroicon-o-user-circle')
+                    ->sort(-3)
+                    ->disabled(),
+                Action::make('profile')
+                    ->label('Profil & Keamanan')
+                    ->url(fn (): string => route('profile.show'))
+                    ->icon('heroicon-o-user'),
+                Action::make('logout')
                     ->label('Log Out')
                     ->url(fn (): string => route('logout'))
                     ->icon('heroicon-o-arrow-left-on-rectangle'),
