@@ -39,9 +39,29 @@
                 </div>
             </div>
         @endauth
+        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 mb-6">
+            <a href="{{ route('health.status') }}" class="block p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
+                <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Status Sistem</h3>
+                <div class="mt-2 flex items-center">
+
+                    @if($isSystemOk)
+                        <span class="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
+                        <p class="text-gray-500 dark:text-gray-400">
+                            Semua sistem berjalan normal.
+                        </p>
+                    @else
+                        <span class="h-3 w-3 rounded-full bg-red-500 mr-2 animate-pulse"></span>
+                        <p class="text-gray-500 dark:text-gray-400">
+                            Terdeteksi ada masalah pada sistem.
+                        </p>
+                    @endif
+
+                </div>
+            </a>
+        </div>
+
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
-
                 <div class="p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Tentang Aplikasi</h3>
                     <p class="mt-2 text-gray-500 dark:text-gray-400">
@@ -49,31 +69,12 @@
                     </p>
                 </div>
 
-                <a href="{{ route('health.status') }}" class="block p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Status Sistem</h3>
-                    <div class="mt-2 flex items-center">
-
-                        @if($isSystemOk)
-                            <span class="h-3 w-3 rounded-full bg-green-500 mr-2"></span>
-                            <p class="text-gray-500 dark:text-gray-400">
-                                Semua sistem berjalan normal.
-                            </p>
-                        @else
-                            <span class="h-3 w-3 rounded-full bg-red-500 mr-2 animate-pulse"></span>
-                            <p class="text-gray-500 dark:text-gray-400">
-                                Terdeteksi ada masalah pada sistem.
-                            </p>
-                        @endif
-
-                    </div>
-                </a>
-
-                <div class="p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg">
-                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Panduan Pengguna</h3>
-                    <p class="mt-2 text-gray-500 dark:text-gray-400">
-                        Butuh bantuan? Silakan akses dokumentasi dan panduan lengkap penggunaan aplikasi melalui link yang tersedia di dalam panel admin.
-                    </p>
-                </div>
+{{--                <div class="p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg">--}}
+{{--                    <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Panduan Pengguna</h3>--}}
+{{--                    <p class="mt-2 text-gray-500 dark:text-gray-400">--}}
+{{--                        Butuh bantuan? Silakan akses dokumentasi dan panduan lengkap penggunaan aplikasi melalui link yang tersedia di dalam panel admin.--}}
+{{--                    </p>--}}
+{{--                </div>--}}
 
                 <div class="p-6 bg-white dark:bg-gray-800 sm:rounded-lg shadow-lg">
                     <h3 class="text-xl font-semibold text-gray-900 dark:text-white">Hubungi Dukungan</h3>
