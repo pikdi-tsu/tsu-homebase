@@ -26,7 +26,7 @@ return Application::configure(basePath: dirname(__DIR__))
         // 1. Handler untuk Database Down (QueryException)
         $exceptions->renderable(function (\Illuminate\Database\QueryException $e, $request) {
             // Tampilkan halaman error khusus jika database down
-            return response()->view('errors.database_down', [], 503);
+            return response()->view('errors.503', [], 503);
         });
 
         // 2. Handler untuk Akses Ditolak (403 Forbidden)
@@ -50,5 +50,6 @@ return Application::configure(basePath: dirname(__DIR__))
                     return redirect()->back();
                 }
             }
+            return null;
         });
     })->create();

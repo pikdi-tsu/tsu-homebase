@@ -54,3 +54,16 @@ Route::get('/admin/{any}', static function () {
 Route::get('/status-sistem', HealthStatusPage::class)
     ->middleware('auth')
     ->name('health.status');
+
+// --- Rute untuk Testing Halaman Error ---
+//Route::get('/404', function () {
+//    abort(404);
+//})->name('404');
+//
+//Route::get('/403', function () {
+//    abort(403, 'Akses Ditolak.');
+//})->name('403');
+//
+//Route::get('/500', function () {
+//    abort(500, 'Terjadi Masalah Internal.');
+//})->name('500');
