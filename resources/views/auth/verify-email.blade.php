@@ -1,7 +1,18 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <x-authentication-card-logo />
+{{--            <x-authentication-card-logo />--}}
+            <a href="{{ route('dashboard') }}" class="flex justify-center">
+                <img src="{{ asset('images/icon-logo-tsu.png') }}" alt="Ikon Tiga Serangkai University" width="40px" />
+            </a>
+
+            <h1 class="mt-4 text-2xl font-bold text-center text-gray-800 dark:text-gray-200">
+                TSU Homebase
+            </h1>
+
+            <p class="mt-1 text-sm text-center text-gray-600 dark:text-gray-400">
+                Sistem Informasi Terpusat Tiga Serangkai University
+            </p>
         </x-slot>
 
         <div class="mb-4 text-sm text-gray-600 dark:text-gray-400">

@@ -49,6 +49,10 @@ class AdminPanelProvider extends PanelProvider
                     ->label('Profil & Keamanan')
                     ->url(fn (): string => route('profile.show'))
                     ->icon('heroicon-o-user'),
+                Action::make('status-sistem')
+                    ->label('Status Sistem')
+                    ->url(fn (): string => route('health.status'))
+                    ->icon('heroicon-o-server'),
                 Action::make('logout')
                     ->label('Log Out')
                     ->url(fn (): string => route('logout'))
