@@ -32,6 +32,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
 
 class UserDosenTendikResource extends Resource
@@ -117,28 +118,19 @@ class UserDosenTendikResource extends Resource
                     ->label('Jabatan (Roles)')
                     ->multiple()
                     ->relationship('roles', 'name')
-                    ->placeholder('Belum di set')
+                    ->getOptionLabelFromRecordUsing(fn (Role $record) => "{$record->name} ({$record->guard_name})")
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->helperText('Format: Nama Roles (guard)')
+                    ->required(),
                 Select::make('permissions')
                     ->label('Izin Tambahan (Direct Permissions)')
-                    ->relationship('permissions','name',
-                        function (Builder $query, Get $get) {
-                            // Ambil roles yang sedang dipilih
-                            $roles = Role::find($get('roles'));
-                            if (!$roles->count()) {
-                                return $query;
-                            }
-                            // Ambil guard dari role pertama yang dipilih
-                            $guard = $roles->first()->guard_name;
-
-                            // Filter permission berdasarkan guard tersebut
-                            return $query->where('guard_name', $guard);
-                        }
-                    )
-                    ->searchable()
                     ->multiple()
-                    ->preload(),
+                    ->relationship('permissions', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Permission $record) => "{$record->name} ({$record->guard_name})")
+                    ->searchable()
+                    ->preload()
+                    ->helperText('Format: Nama Permission (guard)'),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
@@ -190,21 +182,28 @@ class UserDosenTendikResource extends Resource
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('roles.name')
-                    ->label('Jabatan (Roles)')
+                    ->label('Role (Guard)')
                     ->placeholder('Tidak ada role')
                     ->badge()
                     ->color('secondary')
+                    ->formatStateUsing(function ($state, Model $record) {
+                        return $record->roles->map(fn($role) => "{$role->name} ({$role->guard_name})")->implode(', ');
+                    })
                     ->searchable(),
                 TextColumn::make('permissions.name')
                     ->label('Izin Tambahan')
                     ->badge()
+                    ->color('secondary')
                     ->placeholder('Tidak ada izin tambahan')
                     ->color('success') // Beri warna berbeda agar mudah dibedakan dari roles
-                    ->limit(3)
-                    ->tooltip(function (Model $record): string {
-                        // Spatie 'permissions' relationship hanya mengambil direct permissions
-                        return $record->permissions->pluck('name')->implode(', ');
-                    }),
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->searchable(),
+//                    ->tooltip(function (Model $record): string {
+//                        // Spatie 'permissions' relationship hanya mengambil direct permissions
+//                        return $record->permissions->pluck('name')->implode(', ');
+//                    }),
                 TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
                     ->label('Pertanyaan Keamanan 1')
                     ->placeholder('Belum di set')

@@ -22,6 +22,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Filament\Forms\Components\Select;
 use Illuminate\Support\Facades\Auth;
+use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class UserMahasiswaResource extends Resource
 {
@@ -71,13 +73,25 @@ class UserMahasiswaResource extends Resource
                 TextInput::make('email')
                     ->email()
                     ->maxLength(255)
+                    ->columnSpanFull()
                     ->required(),
                 Select::make('roles')
-                    ->label('Jabatan (Roles)')
+                    ->label('Roles')
                     ->multiple()
                     ->relationship('roles', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Role $record) => "{$record->name} ({$record->guard_name})")
                     ->searchable()
-                    ->preload(),
+                    ->preload()
+                    ->helperText('Format: Nama Roles (guard)')
+                    ->required(),
+                Select::make('permissions')
+                    ->label('Izin Tambahan (Direct Permissions)')
+                    ->multiple()
+                    ->relationship('permissions', 'name')
+                    ->getOptionLabelFromRecordUsing(fn (Permission $record) => "{$record->name} ({$record->guard_name})")
+                    ->searchable()
+                    ->preload()
+                    ->helperText('Format: Nama Permission (guard)'),
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
@@ -87,10 +101,9 @@ class UserMahasiswaResource extends Resource
                             return [$item->id => $item->pertanyaan . '?'];
                         })
                     )
-                    ->searchable()
-                    ->required(),
+                    ->searchable(),
                 Select::make('q2') // Ini akan menyimpan ID pertanyaan
-                ->label('Pertanyaan Keamanan 2')
+                    ->label('Pertanyaan Keamanan 2')
                     ->options(
                         PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
                         ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
@@ -98,14 +111,11 @@ class UserMahasiswaResource extends Resource
                             return [$item->id => $item->pertanyaan . '?'];
                         })
                     )
-                    ->searchable()
-                    ->required(),
+                    ->searchable(),
                 TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
-                ->label('Jawaban Keamanan 1')
-                    ->required(),
+                    ->label('Jawaban Keamanan 1'),
                 TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
-                ->label('Jawaban Keamanan 2')
-                    ->required(),
+                    ->label('Jawaban Keamanan 2'),
             ]);
     }
 
@@ -124,21 +134,40 @@ class UserMahasiswaResource extends Resource
                 TextColumn::make('email')
                     ->searchable(),
                 TextColumn::make('roles.name')
-                    ->label('Roles')
+                    ->label('Role (Guard)')
                     ->badge()
                     ->color('secondary')
                     ->placeholder('Belum di set')
-                    ->searchable(),
+                    ->separator('<br>') // Gunakan <br> sebagai separator
+                    ->getStateUsing(function (Model $record) {
+                        if ($record->roles->isEmpty()) {
+                            return null;
+                        }
+                        // Ubah implode menjadi return array biasa
+                        return $record->roles->map(fn($role) => "{$role->name} ({$role->guard_name})")->all();
+                    })
+                    ->html() // <-- PENTING! Agar tag <br> dirender sebagai HTML
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->searchable(
+                        query: function (Builder $query, string $search): Builder {
+                            return $query->whereHas('roles', fn(Builder $q) => $q->where('name', 'like', "%{$search}%"));
+                        }
+                    ),
                 TextColumn::make('permissions.name')
                     ->label('Izin Tambahan')
                     ->badge()
                     ->placeholder('Tidak ada izin tambahan')
                     ->color('success') // Beri warna berbeda agar mudah dibedakan dari roles
-                    ->limit(3)
-                    ->tooltip(function (Model $record): string {
-                        // Spatie 'permissions' relationship hanya mengambil direct permissions
-                        return $record->permissions->pluck('name')->implode(', ');
-                    }),
+                    ->listWithLineBreaks()
+                    ->limitList(2)
+                    ->expandableLimitedList()
+                    ->searchable(),
+//                    ->tooltip(function (Model $record): string {
+//                        // Spatie 'permissions' relationship hanya mengambil direct permissions
+//                        return $record->permissions->pluck('name')->implode(', ');
+//                    }),
                 TextColumn::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")
