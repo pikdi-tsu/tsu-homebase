@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Health\IndonesianWindowsDiskSpaceCheck;
 use App\Http\Responses\LoginResponse;
+use Illuminate\Support\Facades\Schema;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use App\Listeners\CheckUserRoleAfterLogin;
 use Filament\Support\Assets\Js;
@@ -20,6 +21,7 @@ use Spatie\Health\Checks\Checks\EnvironmentCheck;
 use Spatie\Health\Checks\Checks\ScheduleCheck;
 use Spatie\Health\Checks\Checks\UsedDiskSpaceCheck;
 use Spatie\Health\Facades\Health;
+use Spatie\Permission\Models\Permission;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -46,6 +48,13 @@ class AppServiceProvider extends ServiceProvider
         Passport::tokensExpireIn(now()->addHours(8)); // Access Token berlaku 8 jam
         Passport::refreshTokensExpireIn(now()->addDays(30)); // Refresh Token berlaku 30 hari
         Passport::personalAccessTokensExpireIn(now()->addMonths(6)); // Token pribadi berlaku 6 bulan
+
+        // Cek dulu apakah tabelnya ada, untuk mencegah error saat migrasi
+        if (Schema::hasTable('permissions')) {
+            $permissions = Permission::all()->pluck('name')->toArray();
+            $scopes = array_fill_keys($permissions, 'Izin dinamis dari database');
+            Passport::tokensCan($scopes);
+        }
 
         Event::listen(
             Login::class,

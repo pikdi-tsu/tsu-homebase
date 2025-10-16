@@ -23,7 +23,14 @@ class ListOauthClients extends ListRecords
                 ->color('secondary')
                 ->modalHeading('Tambah Oauth')
                 ->modalSubmitActionLabel('Simpan')
-                ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi'))
+                ->createAnotherAction(function (Action $action) {
+                    return $action
+                        ->label('Simpan & Tambah Lagi')
+                        ->extraAttributes([
+                            'wire:loading.attr' => 'disabled',
+                            'wire:loading.class' => '!cursor-wait !opacity-50',
+                        ]);
+                })
                 ->modalCancelActionLabel('Batal')
                 ->using(function (array $data): Model {
                     $name = ['name'];

@@ -18,7 +18,7 @@ class OauthDummySeeder extends Seeder
             'name' => 'Client Credentials Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-            'redirect_uris' => ['https://localhost/callback'],
+//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['client_credentials'],
             'revoked' => false,
         ]);
@@ -26,7 +26,7 @@ class OauthDummySeeder extends Seeder
             'name' => 'Password Grant Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-            'redirect_uris' => ['https://localhost/callback'],
+//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['password'],
             'revoked' => false,
         ]);
@@ -42,7 +42,7 @@ class OauthDummySeeder extends Seeder
             'name' => 'Personal Access Token Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-            'redirect_uris' => ['https://localhost/callback'],
+//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['personal_access'],
             'revoked' => false,
         ]);

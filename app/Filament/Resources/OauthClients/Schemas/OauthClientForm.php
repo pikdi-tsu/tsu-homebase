@@ -9,6 +9,8 @@ use Filament\Forms\Components\TagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\Toggle;
+use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
 use Filament\Schemas\Schema;
 use Illuminate\Support\HtmlString;
 
@@ -20,8 +22,7 @@ class OauthClientForm
             ->components([
                 TextInput::make('name')
                     ->label('Nama Modul/Aplikasi')
-                    ->required()
-                    ->columnSpanFull(),
+                    ->required(),
 //                Select::make('owner_type')
 //                    ->label('Tipe Pemilik (Owner)')
 //                    ->options([
@@ -45,13 +46,23 @@ class OauthClientForm
                         'client_credentials' => 'Client Credentials',
                         'authorization_code' => 'Authorization Code',
                         'password' => 'Password Grant',
+                        'personal_access' => 'Personal Access',
                     ])
-                    ->required()
-                    ->live(),
+                    ->live(onBlur: true)
+                    ->afterStateUpdated(function (Get $get, Set $set) {
+                        if (! in_array('authorization_code', $get('grant_types') ?? [], true)) {
+                            $set('redirect_uris', []);
+                        }
+                    })
+                    ->required(),
                 TagsInput::make('redirect_uris')
                     ->label('URL Redirect')
+                    ->columnSpanFull()
                     ->placeholder('Masukkan URL lalu tekan Enter')
-                    ->required(),
+                    ->visible(fn ($get): bool => in_array('authorization_code', $get('grant_types') ?? [], true))
+//                    ->disabled(fn ($get) => !in_array('authorization_code', $get('grant_types') ?? [], true))
+                    ->required(fn ($get): bool => in_array('authorization_code', $get('grant_types') ?? [], true))
+                ,
                 TagsInput::make('scopes')
                     ->label('Scopes (Izin)')
                     ->placeholder('Ketik scope baru lalu tekan Enter')

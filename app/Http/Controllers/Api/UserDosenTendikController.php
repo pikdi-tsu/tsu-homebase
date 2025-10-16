@@ -18,7 +18,7 @@ class UserDosenTendikController extends Controller
         $users = UserDosenTendik::query()->get();
 
         // 2. "Bungkus" data tersebut dengan format dari API Resource
-        return UserDosenTendikResource::collection($users);
+        return \App\Filament\Resources\UserDosenTendikResource::collection($users);
     }
 
     /**
