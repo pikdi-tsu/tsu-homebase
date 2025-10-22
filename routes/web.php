@@ -4,7 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Livewire\HealthStatusPage;
 use Spatie\Health\Models\HealthCheckResultHistoryItem;
 
-Route::get('/', static fn() => redirect()->route('dashboard'));
+//Route::get('/', static fn() => redirect()->route('dashboard'));
+Route::get('/', static fn() => view('welcome'))->name('landing');
 
 Route::get('/dashboard', function () {
     // 1. Dapatkan UUID dari batch pemeriksaan terakhir

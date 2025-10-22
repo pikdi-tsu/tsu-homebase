@@ -17,10 +17,17 @@ use Filament\Tables\Table;
 class OauthClientResource extends Resource
 {
     protected static ?string $model = OauthCLient::class;
+
     protected static string|BackedEnum|null $navigationIcon = Heroicon::OutlinedShieldCheck;
+
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
+
     protected static ?string $modelLabel = 'Oauth Client';
+
     protected static ?string $pluralModelLabel = 'Oauth Clients';
+
     protected static ?string $navigationLabel = 'Oauth Clients';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getGloballySearchableAttributes(): array

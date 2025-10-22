@@ -29,11 +29,16 @@ class UserMahasiswaResource extends Resource
 {
     protected static ?string $model = UserMahasiswa::class;
 
-
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-user-group';
+
+    protected static string|null|\UnitEnum $navigationGroup = 'Manajemen Users';
+
     protected static ?string $navigationLabel = 'User Mahasiswa';
+
     protected static ?string $modelLabel = 'User Mahasiswa';
+
     protected static ?string $pluralModelLabel = 'User Mahasiswa';
+
     protected static ?string $recordTitleAttribute = 'name';
 
     public static function getGloballySearchableAttributes(): array

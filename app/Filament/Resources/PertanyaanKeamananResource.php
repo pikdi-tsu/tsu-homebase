@@ -26,11 +26,14 @@ class PertanyaanKeamananResource extends Resource
 
     protected static string | \BackedEnum | null $navigationIcon = 'heroicon-o-question-mark-circle';
 
+    protected static string|null|\UnitEnum $navigationGroup = 'Settings';
+
     protected static ?string $navigationLabel = 'Pertanyaan Keamanan';
 
     protected static ?string $modelLabel = 'Pertanyaan Keamanan';
 
     protected static ?string $pluralModelLabel = 'Pertanyaan Keamanan';
+
     protected static ?string $recordTitleAttribute = 'pertanyaan';
 
     public static function getGloballySearchableAttributes(): array
