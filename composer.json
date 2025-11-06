@@ -9,6 +9,7 @@
         "php": "^8.2",
         "doctrine/dbal": "^4.3",
         "filament/filament": "^4.0",
+        "filament/spatie-laravel-settings-plugin": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/jetstream": "^5.3",
         "laravel/passport": "^13.2",
@@ -17,7 +18,9 @@
         "livewire/livewire": "^3.6.4",
         "owenvoke/blade-fontawesome": "^2.9",
         "spatie/laravel-health": "^1.34",
-        "spatie/laravel-permission": "^6.21"
+        "spatie/laravel-permission": "^6.21",
+        "spatie/laravel-settings": "^3.4",
+        "spatie/laravel-sluggable": "^3.7"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",
