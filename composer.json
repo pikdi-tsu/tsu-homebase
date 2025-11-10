@@ -10,6 +10,7 @@
         "doctrine/dbal": "^4.3",
         "filament/filament": "^4.0",
         "filament/spatie-laravel-settings-plugin": "^4.1",
+        "filament/spatie-laravel-tags-plugin": "^4.1",
         "laravel/framework": "^12.0",
         "laravel/jetstream": "^5.3",
         "laravel/passport": "^13.2",
@@ -20,7 +21,8 @@
         "spatie/laravel-health": "^1.34",
         "spatie/laravel-permission": "^6.21",
         "spatie/laravel-settings": "^3.4",
-        "spatie/laravel-sluggable": "^3.7"
+        "spatie/laravel-sluggable": "^3.7",
+        "spatie/laravel-tags": "^4.10"
     },
     "require-dev": {
         "barryvdh/laravel-debugbar": "^3.16",

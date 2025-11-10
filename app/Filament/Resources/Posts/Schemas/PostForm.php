@@ -6,6 +6,7 @@ use Filament\Forms\Components\DateTimePicker;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\RichEditor;
 use Filament\Forms\Components\Select;
+use Filament\Forms\Components\SpatieTagsInput;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Components\Textarea;
 use Filament\Schemas\Components\Group;
@@ -64,6 +65,10 @@ class PostForm
                             ->label('Category')
                             ->relationship('category', 'name')
                             ->required(),
+
+                        SpatieTagsInput::make('tags')
+                            ->label('Tags')
+                            ->type('post'),
 
                         Select::make('user_id')
                             ->label('Author')
