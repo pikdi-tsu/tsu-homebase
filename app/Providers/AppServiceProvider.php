@@ -4,7 +4,9 @@ namespace App\Providers;
 
 use App\Health\IndonesianWindowsDiskSpaceCheck;
 use App\Http\Responses\LoginResponse;
+use App\Settings\GeneralSettings;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\View;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use App\Listeners\CheckUserRoleAfterLogin;
 use Filament\Support\Assets\Js;
@@ -76,5 +78,9 @@ class AppServiceProvider extends ServiceProvider
                 ->warnWhenUsedSpaceIsAbovePercentage(60)
                 ->failWhenUsedSpaceIsAbovePercentage(85),
         ]);
+
+        View::composer('navigation-menu', function ($view) {
+            $view->with('navItems', app(GeneralSettings::class)->main_navigation);
+        });
     }
 }

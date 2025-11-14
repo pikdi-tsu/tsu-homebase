@@ -23,6 +23,18 @@
                         </x-nav-link>
                         @endhasanyrole
                     @endauth
+{{--                    @php--}}
+{{--                        // Ambil data menu dari GeneralSettings--}}
+{{--                        $navItems = app(App\Settings\GeneralSettings::class)->main_navigation;--}}
+{{--                    @endphp--}}
+
+                    @if(is_array($navItems))
+                        @foreach($navItems as $item)
+                            <x-nav-link href="{{ $item['url'] }}" :active="request()->is(ltrim($item['url'], '/'))">
+                                {{ $item['label'] }}
+                            </x-nav-link>
+                        @endforeach
+                    @endif
                 </div>
             </div>
 
