@@ -45,7 +45,7 @@ class CreateUserDosenTendik extends CreateRecord
                                 ->all();
                         })
                         ->getOptionLabelUsing(function ($value): ?string {
-                            return BackupUsersDosenTendik::where('nip', $value)->first()?->nama_lengkap_dan_nip;
+                            return BackupUsersDosenTendik::query()->where('nip', $value)->first()?->nama_lengkap_dan_nip;
                         })
 //                        ->getOptionLabelsUsing(fn (string $value): array => BackupUsersDosenTendik::query()
 //                            ->where('nip', $value)?->pluck('nama', 'nip')->all())
@@ -68,7 +68,7 @@ class CreateUserDosenTendik extends CreateRecord
                                 return;
                             }
 
-                            $user = BackupUsersDosenTendik::where('nip', $state)->first();
+                            $user = BackupUsersDosenTendik::query()->where('nip', $state)->first();
                             if ($user) {
                                 $set('email', $user->email_kampus);
                             } else {
@@ -107,7 +107,7 @@ class CreateUserDosenTendik extends CreateRecord
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(
-                            PertanyaanKeamanan::where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
+                            PertanyaanKeamanan::query()->where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
                             ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
                                 // 3. Buat array [id => "Pertanyaan... ?"]
                                 return [$item->id => $item->pertanyaan . '?'];
@@ -119,7 +119,7 @@ class CreateUserDosenTendik extends CreateRecord
                     Select::make('q2') // Ini akan menyimpan ID pertanyaan
                     ->label('Pertanyaan Keamanan 2')
                         ->options(
-                            PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
+                            PertanyaanKeamanan::query()->where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
                             ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
                                 // 3. Buat array [id => "Pertanyaan... ?"]
                                 return [$item->id => $item->pertanyaan . '?'];

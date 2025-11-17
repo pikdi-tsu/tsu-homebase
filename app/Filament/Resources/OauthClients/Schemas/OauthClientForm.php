@@ -54,6 +54,29 @@ class OauthClientForm
                             $set('redirect_uris', []);
                         }
                     })
+                    ->dehydrateStateUsing(function (?array $state): array {
+                        // cek $state
+                        if (in_array('password', $state ?? [], true)) {
+                            // Jika admin memilih 'password', tambahkan 'refresh_token'
+                            $state[] = 'refresh_token';
+                        }
+
+                        return array_unique($state ?? []);
+                    })
+                    ->afterStateHydrated(function (Select $component, ?array $state) {
+                        // $state ['password', 'refresh_token'] adalah data dari DB
+                        if (is_null($state)) {
+                            return;
+                        }
+
+                        // hapus 'refresh_token' dari array
+                        $newState = array_filter($state, static function ($grant) {
+                            return $grant !== 'refresh_token';
+                        });
+
+                        // lalu set state ke komponen Select-nya
+                        $component->state($newState);
+                    })
                     ->required(),
                 TagsInput::make('redirect_uris')
                     ->label('URL Redirect')
@@ -75,8 +98,8 @@ class OauthClientForm
                             <li><strong>Client Credentials:</strong> Paling umum untuk komunikasi antar server.</li>
                             <li><strong>Authorization Code:</strong> Untuk aplikasi web pihak ketiga (alur "Login dengan Google").</li>
                             <li><strong>Password Grant:</strong> Hanya untuk aplikasi pihak pertama yang sangat dipercaya.</li>
+                            <li><strong>Refresh Token:</strong> Izinkan klien untuk memperbarui access token. (Satu Kesatuan dengan Password Grant)</li>
                             <li><strong>Personal Access:</strong> Untuk mengizinkan user membuat token pribadinya sendiri.</li>
-                            <li><strong>Refresh Token:</strong> Izinkan klien untuk memperbarui access token.</li>
                         </ul>'
                     ))
                     ->columnSpanFull(),

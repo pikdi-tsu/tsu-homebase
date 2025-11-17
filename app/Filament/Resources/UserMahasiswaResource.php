@@ -11,11 +11,12 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use App\Filament\Resources\UserMahasiswaResource\Pages\ListUserMahasiswa;
 use App\Filament\Resources\UserMahasiswaResource\Pages;
-use App\Filament\Resources\UserMahasiswaResource\RelationManagers;
+//use App\Filament\Resources\UserMahasiswaResource\RelationManagers;
 use App\Models\UserMahasiswa;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
@@ -186,6 +187,10 @@ class UserMahasiswaResource extends Resource
                     ->label('Jawaban Keamanan 2')
                     ->placeholder('Belum di set')
                     ->searchable(),
+                ToggleColumn::make('is_active')
+                    ->label('Aktif')
+                    ->onColor('success')
+                    ->offColor('danger'),
             ])
             ->filters([
                 //

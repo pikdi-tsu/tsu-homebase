@@ -18,12 +18,13 @@ use App\Filament\Resources\UserDosenTendikResource\Pages\CreateUserDosenTendik;
 use App\Filament\Resources\UserDosenTendikResource\Pages\ListUserDosenTendik;
 use App\Filament\Resources\UserDosenTendikResource\Pages\EditUserDosenTendik;
 use App\Filament\Resources\UserDosenTendikResource\Pages;
-use App\Filament\Resources\UserDosenTendikResource\RelationManagers;
+//use App\Filament\Resources\UserDosenTendikResource\RelationManagers;
 use App\Models\BackupUsersDosenTendik;
 use App\Models\UserDosenTendik;
 use Filament\Forms;
 use Filament\Resources\Resource;
 use Filament\Tables;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
 use Filament\Resources\Pages\Page; // Jangan lupa tambahkan ini di atas
 use Filament\Resources\Pages\CreateRecord; // dan ini juga
@@ -222,6 +223,10 @@ class UserDosenTendikResource extends Resource
                     ->label('Jawaban Keamanan 2')
                     ->placeholder('Belum di set')
                     ->searchable(),
+                ToggleColumn::make('is_active')
+                    ->label('Aktif')
+                    ->onColor('success')
+                    ->offColor('danger'),
             ])
             ->filters([
                 //
