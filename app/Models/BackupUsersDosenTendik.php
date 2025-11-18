@@ -19,7 +19,7 @@ class BackupUsersDosenTendik extends Model
     use Notifiable;
     use HasRoles;
 
-    protected $table = 'backup_users_dosen_tendik';
+    protected $table = 'data_backup_pegawai';
 
     protected $fillable = [
         'nip',

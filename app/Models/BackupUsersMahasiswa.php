@@ -15,7 +15,7 @@ class BackupUsersMahasiswa extends Model
     use Notifiable;
     use HasRoles;
 
-    protected $table = 'backup_users_mahasiswa';
+    protected $table = 'data_backup_mahasiswa';
 
     protected $fillable = [
         "periode_masuk",
