@@ -23,10 +23,10 @@ trait HasCommonUserColumns
         $table->string('a1')->nullable();
         $table->string('q2')->nullable();
         $table->string('a2')->nullable();
-        $table->enum('forgot_password_send_email', [0,1])->default(0);
+        $table->tinyInteger('forgot_password_send_email')->default(0);
         $table->string('created_by');
         $table->string('updated_by')->nullable();
         $table->timestamps();
-        $table->enum('is_active', ['tidak aktif','aktif'])->default('aktif');
+        $table->tinyInteger('is_active')->default(1);
     }
 }

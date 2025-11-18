@@ -29,6 +29,9 @@ use App\Http\Controllers\Api\V1\AuthorizationController;
 Route::prefix('v1/auth')->group(function () {
     Route::post('/login/dosen-tendik', [AuthController::class, 'loginDosenTendik']);
     Route::post('/login/mahasiswa', [AuthController::class, 'loginMahasiswa']);
+    Route::post('/refresh', [AuthController::class, 'refreshToken']);
+//    Route::post('/password/send-link', [AuthController::class, 'sendResetLink']);
+//    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
 
     // Endpoint logout harus dilindungi otentikasi
     Route::middleware('auth:api,api2')->post('/logout', [AuthController::class, 'logout']);
@@ -36,7 +39,8 @@ Route::prefix('v1/auth')->group(function () {
 
 
 // --- Endpoints Profil (Untuk User yang Sudah Login) ---
-Route::middleware('auth:api,api2')->prefix('v1')->group(function () {
+Route::middleware('auth:api,ap  i2')->prefix('v1')->group(function () {
+    Route::get('/me', [AuthController::class, 'getMe'])->middleware('auth:api');
     Route::get('/profile', [UserProfileController::class, 'show']);
     Route::put('/profile', [UserProfileController::class, 'update']);
     Route::post('/profile/change-password', [UserProfileController::class, 'changePassword']);

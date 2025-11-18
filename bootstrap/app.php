@@ -21,6 +21,9 @@ return Application::configure(basePath: dirname(__DIR__))
             'scope' => \Laravel\Passport\Http\Middleware\CheckToken::class,
             'client' => \Laravel\Passport\Http\Middleware\EnsureClientIsResourceOwner::class,
         ]);
+        $middleware->appendToGroup('api', [
+            \App\Http\Middleware\CheckUserIsActive::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // 1. Handler untuk Database Down (QueryException)

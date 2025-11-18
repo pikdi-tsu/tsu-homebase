@@ -3,6 +3,8 @@
 use Illuminate\Support\Facades\Route;
 use App\Livewire\HealthStatusPage;
 use Spatie\Health\Models\HealthCheckResultHistoryItem;
+use App\Http\Controllers\Auth\CustomPasswordResetLinkController;
+use App\Http\Controllers\Auth\CustomNewPasswordController;
 
 //Route::get('/', static fn() => redirect()->route('dashboard'));
 Route::get('/', static fn() => view('welcome'))->name('landing');
@@ -55,6 +57,12 @@ Route::get('/admin/{any}', static function () {
 Route::get('/status-sistem', HealthStatusPage::class)
     ->middleware('auth')
     ->name('health.status');
+
+Route::post('/forgot-password', [CustomPasswordResetLinkController::class, 'store'])
+    ->middleware(['guest'])->name('password.email');
+
+Route::post('/reset-password', [CustomNewPasswordController::class, 'store'])
+    ->middleware(['guest'])->name('password.update');
 
 // --- Rute untuk Testing Halaman Error ---
 //Route::get('/404', function () {

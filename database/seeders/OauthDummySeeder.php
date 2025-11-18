@@ -14,7 +14,7 @@ class OauthDummySeeder extends Seeder
      */
     public function run(): void
     {
-        OauthCLient::create([
+        OauthCLient::query()->create([
             'name' => 'Client Credentials Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
@@ -22,15 +22,15 @@ class OauthDummySeeder extends Seeder
             'grant_types' => ['client_credentials'],
             'revoked' => false,
         ]);
-        OauthCLient::create([
+        OauthCLient::query()->create([
             'name' => 'Password Grant Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
 //            'redirect_uris' => ['https://localhost/callback'],
-            'grant_types' => ['password'],
+            'grant_types' => ['password', 'refresh_token'],
             'revoked' => false,
         ]);
-        OauthCLient::create([
+        OauthCLient::query()->create([
             'name' => 'Authorization Code Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
@@ -38,7 +38,7 @@ class OauthDummySeeder extends Seeder
             'grant_types' => ['authorization_code'],
             'revoked' => false,
         ]);
-        OauthCLient::create([
+        OauthCLient::query()->create([
             'name' => 'Personal Access Token Test',
             'secret' => Str::random(40),
             'provider' => 'users',

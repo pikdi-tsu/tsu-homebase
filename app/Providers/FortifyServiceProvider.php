@@ -37,19 +37,20 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
-        RateLimiter::for('login', function (Request $request) {
+        RateLimiter::for('login', static function (Request $request) {
             $throttleKey = Str::transliterate(Str::lower($request->input(Fortify::username())).'|'.$request->ip());
 
             return Limit::perMinute(5)->by($throttleKey);
         });
 
-        RateLimiter::for('two-factor', function (Request $request) {
+        RateLimiter::for('two-factor', static function (Request $request) {
             return Limit::perMinute(5)->by($request->session()->get('login.id'));
         });
 
         $this->app->singleton(LoginResponse::class, function ($app) {
             return new class implements LoginResponse {
-                public function toResponse($request) {
+                public function toResponse($request): \Illuminate\Http\RedirectResponse
+                {
                     if (auth()->user()->hasRole('admin|super admin')) {
                         return redirect()->intended('/admin');
                     }
