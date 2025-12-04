@@ -229,7 +229,7 @@ class UserDosenTendikResource extends Resource
                     ->label('Jawaban Keamanan 2')
                     ->placeholder('Belum di set')
                     ->searchable(),
-                ToggleColumn::make('is_active')
+                ToggleColumn::make('isactive')
                     ->label('Aktif')
                     ->onColor('success')
                     ->offColor('danger'),

@@ -39,7 +39,7 @@ class UserMahasiswa extends Authenticatable
         'forgot_password_send_email',
         'created_by',
         'updated_by',
-        'is_active',
+        'isactive',
     ];
 
     protected $hidden = [

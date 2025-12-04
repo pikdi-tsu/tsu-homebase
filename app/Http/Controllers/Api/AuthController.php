@@ -72,7 +72,7 @@ class AuthController extends Controller
         }
 
         // Cek Status User
-        if (!$user->is_active) {
+        if (!$user->isactive) {
             throw ValidationException::withMessages([
                 'message' => ['Akun Anda telah dinonaktifkan. Silakan hubungi admin.'],
             ]);

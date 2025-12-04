@@ -46,7 +46,7 @@ class MahasiswaSeeder extends Seeder
                         'email' => 'mahasiswa3@tsu.ac.id',
                     ],
                     [
-                    'nim' => '25100001',
+                    'nim' => '25100003',
                     'name' => 'Mahasiswa Tiga',
                     'password' => resolve(DefaultPasswordService::class)->getDefaultHashedPassword(),
                     'created_by' => $loggedAdmin,

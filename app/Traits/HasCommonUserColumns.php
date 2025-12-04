@@ -18,6 +18,8 @@ trait HasCommonUserColumns
         $table->string('email')->nullable()->unique();
         $table->timestamp('email_verified_at')->nullable();
         $table->string('password');
+        $table->string('role_access')->nullable();
+        $table->string('privilege_pmb')->nullable();
         $table->rememberToken();
         $table->string('q1')->nullable();
         $table->string('a1')->nullable();
@@ -27,6 +29,6 @@ trait HasCommonUserColumns
         $table->string('created_by');
         $table->string('updated_by')->nullable();
         $table->timestamps();
-        $table->tinyInteger('is_active')->default(1);
+        $table->tinyInteger('isactive')->default(1);
     }
 }
