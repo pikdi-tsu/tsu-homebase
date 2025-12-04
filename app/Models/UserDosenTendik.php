@@ -43,7 +43,7 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
         'forgot_password_send_email',
         'created_by',
         'updated_by',
-        'is_active',
+        'isactive',
     ];
 
     /**

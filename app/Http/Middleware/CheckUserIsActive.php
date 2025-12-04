@@ -17,7 +17,7 @@ class CheckUserIsActive
     public function handle(Request $request, Closure $next): Response
     {
         // Cek apakah user sudah login DAN statusnya TIDAK aktif
-        if (Auth::check() && !Auth::user()->is_active) {
+        if (Auth::check() && !Auth::user()->isactive) {
             // Opsional: Cabut tokennya jika ada
             // Auth::user()->token()->revoke();
 

@@ -24,7 +24,7 @@ class LastLoggedInUsersMahasiswaWidget extends TableWidget
                 TextColumn::make('name')
                     ->searchable()
                     ->sortable(),
-                TextColumn::make('is_active'),
+                TextColumn::make('isactive'),
                 TextColumn::make('last_login_at')
                     ->dateTime()
                     ->sortable(),
