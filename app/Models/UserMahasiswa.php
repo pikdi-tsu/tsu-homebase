@@ -32,6 +32,8 @@ class UserMahasiswa extends Authenticatable
         'name',
         'email',
         'password',
+        'role_access',
+        'privilege_pmb',
         'q1',
         'a1',
         'q2',
@@ -61,5 +63,15 @@ class UserMahasiswa extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function MasterGroup()
+    {
+        return $this->belongsTo(MasterGroup::class, 'role_access', 'KodeGroupUser');
+    }
+
+    public function MasterGroupPMB()
+    {
+        return $this->belongsTo(PrivilegePMB::class, 'privilege_pmb', 'KodeGroupUser');
     }
 }

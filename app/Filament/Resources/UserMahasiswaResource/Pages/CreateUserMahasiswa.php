@@ -4,7 +4,9 @@ namespace App\Filament\Resources\UserMahasiswaResource\Pages;
 
 use App\Filament\Resources\UserMahasiswaResource;
 use App\Models\BackupUsersMahasiswa;
+use App\Models\MasterGroup;
 use App\Models\PertanyaanKeamanan;
+use App\Models\PrivilegePMB;
 use Filament\Actions;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
@@ -26,53 +28,24 @@ class CreateUserMahasiswa extends CreateRecord
             Grid::make()
                 ->columns(2) // Buat 2 kolom
                 ->schema([
-                    Select::make('nim')
-                        ->label('NIM - Nama Mahasiswa')
-                        ->placeholder('Pilih salah satu data Mahasiswa')
-//                        ->options(BackupUsersMahasiswa::all()->pluck('nama_lengkap_dan_nim', 'nim'))
-                        ->searchPrompt('Ketik NIM atau Nama untuk mencari...')
-                        ->getSearchResultsUsing(function (string $search): array {
-                            if (strlen($search) < 3) {
-                                return [];
-                            }
-
-                            return BackupUsersMahasiswa::where('nama', 'like', "%{$search}%")
-                                ->orWhere('nim', 'like', "%{$search}%")
-                                ->limit(50)
-                                ->get()
-                                ->pluck('nama_lengkap_dan_nim', 'nim')
-                                ->all();
-                        })
-                        ->getOptionLabelUsing(function ($value): ?string {
-                            return BackupUsersMahasiswa::where('nim', $value)->first()?->nama_lengkap_dan_nim;
-                        })
-                        ->afterStateUpdated(function ($state, callable $set) {
-                            if (is_null($state)) {
-                                $set('email', null);
-                                return;
-                            }
-
-                            $user = BackupUsersMahasiswa::where('nim', $state)->first();
-                            if ($user) {
-                                $set('email', $user->email);
-                                // $set('field_lain', $user->kolom_lain); // Tambahkan field lain jika ada
-                            } else {
-                                $set('email', 'Email tidak ditemukan di data backup');
-                            }
-                        })
-                        ->searchable(['nama', 'nim'])
-                        ->live(debounce: 250)
-                        ->preload()
-                        ->columnSpanFull()
+                    TextInput::make('nim')
+                        ->label('Nomor Induk Mahasiswa')
+                        ->placeholder('Masukkan NIM Mahasiswa')
+                        ->required(),
+                    TextInput::make('name')
+                        ->label('Nama Lengkap')
+                        ->placeholder('Masukkan Nama dan Gelar Jika Ada')
                         ->required(),
                     TextInput::make('email')
                         ->email()
-                        ->maxLength(255)
-                        ->readonly()
+                        ->placeholder('Masukkan Email TSU')
+                        ->unique(ignoreRecord: true)
                         ->columnSpanFull()
-                        ->placeholder('Email akan terisi otomatis...'),
+                        ->required(),
+
+                    // ROLE & PERMISSIONS SPATIE (Utama)
                     Select::make('roles')
-                        ->label('Roles')
+                        ->label('Jabatan (Roles)')
                         ->multiple()
                         ->relationship('roles', 'name')
                         ->getOptionLabelFromRecordUsing(fn (Role $record) => "{$record->name} ({$record->guard_name})")
@@ -82,40 +55,50 @@ class CreateUserMahasiswa extends CreateRecord
                         ->required(),
                     Select::make('permissions')
                         ->label('Izin Tambahan (Direct Permissions)')
-                        ->relationship('permissions','name')
+                        ->multiple()
+                        ->relationship('permissions', 'name')
                         ->getOptionLabelFromRecordUsing(fn (Permission $record) => "{$record->name} ({$record->guard_name})")
                         ->searchable()
-                        ->multiple()
                         ->preload()
                         ->helperText('Format: Nama Permission (guard)'),
+
+                    // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                    Select::make('role_access')
+                        ->label('Role Legacy')
+                        ->options(MasterGroup::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                        ->searchable(),
+                    Select::make('privilege_pmb')
+                        ->label('Privilege PMB')
+                        ->options(PrivilegePMB::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                        ->searchable(),
+
+                    // Security Question
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(
-                            PertanyaanKeamanan::where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
-                            ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                                // 3. Buat array [id => "Pertanyaan... ?"]
-                                return [$item->id => $item->pertanyaan . '?'];
-                            })
+                            PertanyaanKeamanan::query()->where('jenis', 'q1')->get()
+                                ->mapWithKeys(function ($item) {
+                                    return [$item->id => $item->pertanyaan . '?'];
+                                })
                         )
                         ->searchable()
                         ->placeholder('Pilih salah satu pertanyaan keamanan')
                         ->searchPrompt('Ketik untuk mencari...'),
-                    Select::make('q2') // Ini akan menyimpan ID pertanyaan
-                    ->label('Pertanyaan Keamanan 2')
+                    Select::make('q2')
+                        ->label('Pertanyaan Keamanan 2')
                         ->options(
-                            PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
-                            ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                                // 3. Buat array [id => "Pertanyaan... ?"]
-                                return [$item->id => $item->pertanyaan . '?'];
-                            })
+                            PertanyaanKeamanan::query()->where('jenis', 'q2')->get()
+                                ->mapWithKeys(function ($item) {
+                                    return [$item->id => $item->pertanyaan . '?'];
+                                })
                         )
                         ->searchable()
                         ->placeholder('Pilih salah satu pertanyaan keamanan')
                         ->searchPrompt('Ketik untuk mencari...'),
-                    TextInput::make('a1') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 1'),
-                    TextInput::make('a2') // <-- Jangan lupa field untuk jawabannya
-                    ->label('Jawaban Keamanan 2'),
+                    TextInput::make('a1')
+                        ->label('Jawaban Keamanan 1'),
+                    TextInput::make('a2')
+                        ->label('Jawaban Keamanan 2'),
                 ])
         ];
     }
