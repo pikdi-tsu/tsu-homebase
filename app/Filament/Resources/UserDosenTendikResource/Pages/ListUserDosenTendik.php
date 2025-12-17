@@ -2,17 +2,22 @@
 
 namespace App\Filament\Resources\UserDosenTendikResource\Pages;
 
+use App\Filament\Actions\ImportDosenTendikAction;
 use App\Models\BackupUsersDosenTendik;
+use App\Models\MasterGroup;
 use App\Services\DefaultPasswordService;
 use App\Traits\HasAccentCreateAction;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use App\Filament\Resources\UserDosenTendikResource;
+use Filament\Forms\Components\Select;
+use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Form;
 use Illuminate\Database\Eloquent\Model;
 use Filament\Resources\Pages\ListRecords;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class ListUserDosenTendik extends ListRecords
 {
@@ -28,44 +33,29 @@ class ListUserDosenTendik extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
+            ImportDosenTendikAction::make(),
+
             CreateAction::make()
-                ->label('Tambah User Dosen/Tendik')
+                ->label('Input Manual Dosen/Tendik')
                 ->color('secondary')
-                ->modalHeading('Tambah User Dosen/Tendik')
-                ->schema(CreateUserDosenTendik::getCreateFormSchema())
+                ->icon('heroicon-m-pencil-square')
+                ->modalHeading('Input Dosen/Tendik Manual')
+                ->modalWidth('2xl')
                 ->modalSubmitActionLabel('Simpan')
-                ->modalCancelActionLabel('Batal')
-                ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi'))
-                ->using(function (array $data, Form $form): Model {
-                    $nik = $data['nik'];
-                    $backupUser = BackupUsersDosenTendik::where('nip', $nik)->first();
-
-                    if ($backupUser) {
-                        $namaLengkapDariBackup = $backupUser->nama;
-
-                        // Memisahkan nama dari gelar
-                        $posisiKomaPertama = strpos($namaLengkapDariBackup, ',');
-
-                        if ($posisiKomaPertama !== false) {
-                            $bagianNama = substr($namaLengkapDariBackup, 0, $posisiKomaPertama);
-                            $bagianGelar = substr($namaLengkapDariBackup, $posisiKomaPertama); // Ini sudah termasuk koma dan semua setelahnya
-
-                            $namaFormatted = Str::title(strtolower(trim($bagianNama)));
-
-                            $data['name'] = $namaFormatted . $bagianGelar;
-                        } else {
-                            // Jika tidak ada koma, anggap semuanya adalah nama dan format seperti biasa
-                            $data['name'] = Str::title(strtolower($namaLengkapDariBackup));
-                        }
-                    }
-
-
+                ->createAnotherAction(fn ($action) => $action->label('Simpan & Tambah Lagi'))
+                ->schema(CreateUserDosenTendik::getCreateFormSchema())
+                ->using(function (array $data, $form): Model {
                     $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
                     $data['created_by'] = Auth::user()->nik;
 
-                    return static::getModel()::create($data);
+                    $rolesIds = $data['roles'] ?? [];
+
+                    $newUser = $this->getModel()::create($data);
+                    $newUser->assignRole($rolesIds);
+
+                    return $newUser;
                 })
-                ->successNotificationTitle('User Dosen/Tendikberhasil ditambahkan'),
+                ->successNotificationTitle('User Dosen/Tendik berhasil ditambahkan'),
         ];
     }
 }

@@ -36,6 +36,8 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
         'name',
         'email',
         'password',
+        'role_access',
+        'privilege_pmb',
         'q1',
         'a1',
         'q2',
@@ -95,5 +97,15 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
     public function pertanyaanKeamananDua(): BelongsTo
     {
         return $this->belongsTo(PertanyaanKeamanan::class, 'q2');
+    }
+
+    public function MasterGroup()
+    {
+        return $this->belongsTo(MasterGroup::class, 'role_access', 'KodeGroupUser');
+    }
+
+    public function MasterGroupPMB()
+    {
+        return $this->belongsTo(PrivilegePMB::class, 'privilege_pmb', 'KodeGroupUser');
     }
 }

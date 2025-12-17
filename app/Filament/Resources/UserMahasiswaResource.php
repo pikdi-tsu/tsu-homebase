@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\MasterGroup;
 use App\Models\PertanyaanKeamanan;
+use App\Models\PrivilegePMB;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\TextColumn;
@@ -66,16 +68,23 @@ class UserMahasiswaResource extends Resource
     {
         return $schema
             ->components([
+                TextInput::make('nim')
+                    ->label('Nomor Induk Mahasiswa')
+                    ->placeholder('Masukkan NIM Mahasiswa')
+                    ->required(),
                 TextInput::make('name')
-                    ->label('nama mahasiswa')
+                    ->label('Nama Mahasiswa')
+                    ->placeholder('Masukkan Nama Lengkap Mahasiswa')
                     ->maxLength(255)
-                    ->columnSpanFull()
                     ->required(),
                 TextInput::make('email')
                     ->email()
+                    ->placeholder('Masukkan Email TSU Mahasiswa')
                     ->maxLength(255)
                     ->columnSpanFull()
                     ->required(),
+
+                // ROLE & PERMISSIONS SPATIE (Utama)
                 Select::make('roles')
                     ->label('Roles')
                     ->multiple()
@@ -93,10 +102,22 @@ class UserMahasiswaResource extends Resource
                     ->searchable()
                     ->preload()
                     ->helperText('Format: Nama Permission (guard)'),
+
+                // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                Select::make('role_access')
+                    ->label('Role Legacy')
+                    ->options(MasterGroup::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                    ->searchable(),
+                Select::make('privilege_pmb')
+                    ->label('Privilege PMB')
+                    ->options(PrivilegePMB::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                    ->searchable(),
+
+                // Security Question
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
-                        PertanyaanKeamanan::where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
+                        PertanyaanKeamanan::query()->where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
                         ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
                             // 3. Buat array [id => "Pertanyaan... ?"]
                             return [$item->id => $item->pertanyaan . '?'];
@@ -106,7 +127,7 @@ class UserMahasiswaResource extends Resource
                 Select::make('q2') // Ini akan menyimpan ID pertanyaan
                     ->label('Pertanyaan Keamanan 2')
                     ->options(
-                        PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
+                        PertanyaanKeamanan::query()->where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
                         ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
                             // 3. Buat array [id => "Pertanyaan... ?"]
                             return [$item->id => $item->pertanyaan . '?'];
@@ -134,12 +155,14 @@ class UserMahasiswaResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
+
+                // ROLE & PERMISSIONS SPATIE (Utama)
                 TextColumn::make('roles.name')
                     ->label('Role (Guard)')
                     ->badge()
                     ->color('secondary')
                     ->placeholder('Belum di set')
-                    ->separator('<br>') // Gunakan <br> sebagai separator
+                    ->separator('<br>')
                     ->getStateUsing(function (Model $record) {
                         if ($record->roles->isEmpty()) {
                             return null;
@@ -147,7 +170,7 @@ class UserMahasiswaResource extends Resource
                         // Ubah implode menjadi return array biasa
                         return $record->roles->map(fn($role) => "{$role->name} ({$role->guard_name})")->all();
                     })
-                    ->html() // <-- PENTING! Agar tag <br> dirender sebagai HTML
+                    ->html()
                     ->listWithLineBreaks()
                     ->limitList(2)
                     ->expandableLimitedList()
@@ -169,6 +192,22 @@ class UserMahasiswaResource extends Resource
 //                        // Spatie 'permissions' relationship hanya mengambil direct permissions
 //                        return $record->permissions->pluck('name')->implode(', ');
 //                    }),
+
+                // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                TextColumn::make('MasterGroup.NamaGroup')
+                    ->label('Role Legacy')
+                    ->placeholder('Tidak ada role')
+                    ->badge()
+                    ->color('secondary')
+                    ->searchable(),
+                TextColumn::make('MasterGroupPMB.NamaGroup')
+                    ->label('Privilege PMB')
+                    ->placeholder('Tidak ada role')
+                    ->badge()
+                    ->color('secondary')
+                    ->searchable(),
+
+                // Security Question
                 TextColumn::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->formatStateUsing(fn (string $state): string => "{$state}?")

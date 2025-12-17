@@ -4,15 +4,24 @@ namespace App\Filament\Resources\UserDosenTendikResource\Pages;
 
 use App\Filament\Resources\UserDosenTendikResource;
 use App\Models\BackupUsersDosenTendik;
+use App\Models\MasterGroup;
 use App\Models\PertanyaanKeamanan;
+use App\Models\PrivilegePMB;
 use Filament\Actions;
+use Filament\Forms\Components\Radio;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Resources\Pages\CreateRecord;
+use Filament\Schemas\Components\Form;
 use Filament\Schemas\Components\Grid;
+use Filament\Schemas\Components\Group;
 use Filament\Schemas\Components\Utilities\Get;
+use Filament\Schemas\Components\Utilities\Set;
+use Filament\Schemas\Components\View;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Support\Facades\Blade;
+use Illuminate\Support\HtmlString;
 use Illuminate\Support\Str;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
@@ -27,66 +36,22 @@ class CreateUserDosenTendik extends CreateRecord
             Grid::make()
                 ->columns(2) // Buat 2 kolom
                 ->schema([
-                    Select::make('nik')
-                        ->label('NIK - Nama Dosen/Tendik')
-                        ->placeholder('Pilih salah satu data Karyawan')
-//                        ->options(BackupUsersDosenTendik::all()->pluck('nama_lengkap_dan_nip', 'nip'))
-                        ->searchPrompt('Ketik NIK atau Nama untuk mencari...')
-                        ->getSearchResultsUsing(function (string $search): array {
-                            if (strlen($search) < 3) {
-                                return [];
-                            }
-                            return BackupUsersDosenTendik::query()
-                                ->where('nama', 'like', "%{$search}%")
-                                ->orWhere('nip', 'like', "%{$search}%")
-                                ->limit(50)
-                                ->get()
-                                ->pluck('nama_lengkap_dan_nip', 'nip')
-                                ->all();
-                        })
-                        ->getOptionLabelUsing(function ($value): ?string {
-                            return BackupUsersDosenTendik::query()->where('nip', $value)->first()?->nama_lengkap_dan_nip;
-                        })
-//                        ->getOptionLabelsUsing(fn (string $value): array => BackupUsersDosenTendik::query()
-//                            ->where('nip', $value)?->pluck('nama', 'nip')->all())
-//                        ->formatStateUsing(function (?string $state): ?string {
-//                            \Log::info($state);
-//                            if (!$state) return null;
-//
-//                            $user = BackupUsersDosenTendik::where('nip', $state)->first();
-//                            if (!$user) return $state;
-//
-//                            // Ambil nama lengkap dari accessor
-//                            $namaLengkap = $user->nama_lengkap_dan_nip;
-//
-//                            // Potong teks jika lebih dari 40 karakter, tambahkan "..."
-//                            return Str::limit($namaLengkap, 20);
-//                        })
-                        ->afterStateUpdated(function ($state, callable $set, Select $component) {
-                            if (is_null($state)) {
-                                $set('email', null);
-                                return;
-                            }
-
-                            $user = BackupUsersDosenTendik::query()->where('nip', $state)->first();
-                            if ($user) {
-                                $set('email', $user->email_kampus);
-                            } else {
-                                $set('email', 'Email tidak ditemukan di data backup');
-                            }
-                        })
-                        ->searchable(['nama', 'nip'])
-                        ->live(debounce: 500)
-                        ->preload()
-                        ->columnSpanFull()
+                    TextInput::make('nik')
+                        ->label('Nomor Induk Karyawan')
+                        ->placeholder('Masukkan NIK Karyawan')
+                        ->required(),
+                    TextInput::make('name')
+                        ->label('Nama Lengkap')
+                        ->placeholder('Masukkan Nama dan Gelar')
                         ->required(),
                     TextInput::make('email')
                         ->email()
-                        ->required()
-                        ->maxLength(255)
-                        ->readonly()
+                        ->placeholder('Masukkan Email TSU')
+                        ->unique(ignoreRecord: true)
                         ->columnSpanFull()
-                        ->placeholder('Email akan terisi otomatis...'),
+                        ->required(),
+
+                    // ROLE & PERMISSIONS SPATIE (Utama)
                     Select::make('roles')
                         ->label('Jabatan (Roles)')
                         ->multiple()
@@ -104,24 +69,34 @@ class CreateUserDosenTendik extends CreateRecord
                         ->searchable()
                         ->preload()
                         ->helperText('Format: Nama Permission (guard)'),
+
+                    // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                    Select::make('role_access')
+                        ->label('Role Legacy')
+                        ->options(MasterGroup::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                        ->searchable(),
+                    Select::make('privilege_pmb')
+                        ->label('Privilege PMB')
+                        ->options(PrivilegePMB::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                        ->searchable(),
+
+                    // Security Question
                     Select::make('q1')
                         ->label('Pertanyaan Keamanan 1')
                         ->options(
-                            PertanyaanKeamanan::query()->where('jenis', 'q1')->get() // 1. Ambil semua data sebagai collection
-                            ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                                // 3. Buat array [id => "Pertanyaan... ?"]
+                            PertanyaanKeamanan::query()->where('jenis', 'q1')->get()
+                            ->mapWithKeys(function ($item) {
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )
                         ->searchable()
                         ->placeholder('Pilih salah satu pertanyaan keamanan')
                         ->searchPrompt('Ketik untuk mencari...'),
-                    Select::make('q2') // Ini akan menyimpan ID pertanyaan
+                    Select::make('q2')
                     ->label('Pertanyaan Keamanan 2')
                         ->options(
-                            PertanyaanKeamanan::query()->where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
-                            ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                                // 3. Buat array [id => "Pertanyaan... ?"]
+                            PertanyaanKeamanan::query()->where('jenis', 'q2')->get()
+                            ->mapWithKeys(function ($item) {
                                 return [$item->id => $item->pertanyaan . '?'];
                             })
                         )

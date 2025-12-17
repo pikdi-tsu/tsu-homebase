@@ -2,7 +2,9 @@
 
 namespace App\Filament\Resources;
 
+use App\Models\MasterGroup;
 use App\Models\PertanyaanKeamanan;
+use App\Models\PrivilegePMB;
 use Filament\Actions\Action;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
@@ -105,16 +107,22 @@ class UserDosenTendikResource extends Resource
     {
         return $schema
             ->components([
+                TextInput::make('nik')
+                    ->label('Nomor Induk Karyawan')
+                    ->placeholder('Masukkan NIK Karyawan')
+                    ->required(),
                 TextInput::make('name')
-                    ->label('nama dosen/tendik')
-                    ->maxLength(255)
-                    ->columnSpanFull()
+                    ->label('Nama Lengkap')
+                    ->placeholder('Masukkan Nama dan Gelar')
                     ->required(),
                 TextInput::make('email')
                     ->email()
-                    ->maxLength(255)
+                    ->placeholder('Masukkan Email TSU')
+                    ->unique(ignoreRecord: true)
                     ->columnSpanFull()
                     ->required(),
+
+                // ROLE & PERMISSIONS SPATIE (Utama)
                 Select::make('roles')
                     ->label('Jabatan (Roles)')
                     ->multiple()
@@ -132,39 +140,44 @@ class UserDosenTendikResource extends Resource
                     ->searchable()
                     ->preload()
                     ->helperText('Format: Nama Permission (guard)'),
+
+                // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                Select::make('role_access')
+                    ->label('Role Legacy')
+                    ->options(MasterGroup::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                    ->searchable(),
+                Select::make('privilege_pmb')
+                    ->label('Privilege PMB')
+                    ->options(PrivilegePMB::all()->pluck('NamaGroup', 'KodeGroupUser'))
+                    ->searchable(),
+
+                // Security Question
                 Select::make('q1')
                     ->label('Pertanyaan Keamanan 1')
                     ->options(
-                        PertanyaanKeamanan::where('jenis', 'q1')->get() // Ambil semua data sebagai collection
-                        ->mapWithKeys(function ($item) { // Lakukan iterasi untuk setiap item
-                            return [$item->id => $item->pertanyaan . '?'];
-                        })
+                        PertanyaanKeamanan::query()->where('jenis', 'q1')->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->id => $item->pertanyaan . '?'];
+                            })
                     )
-                    ->placeholder('Belum di set')
                     ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->placeholder('Pilih salah satu pertanyaan keamanan')
+                    ->searchPrompt('Ketik untuk mencari...'),
                 Select::make('q2')
-                ->label('Pertanyaan Keamanan 2')
+                    ->label('Pertanyaan Keamanan 2')
                     ->options(
-                        PertanyaanKeamanan::where('jenis', 'q2')->get() // 1. Ambil semua data sebagai collection
-                        ->mapWithKeys(function ($item) { // 2. Lakukan iterasi untuk setiap item
-                            // 3. Buat array [id => "Pertanyaan... ?"]
-                            return [$item->id => $item->pertanyaan . '?'];
-                        })
+                        PertanyaanKeamanan::query()->where('jenis', 'q2')->get()
+                            ->mapWithKeys(function ($item) {
+                                return [$item->id => $item->pertanyaan . '?'];
+                            })
                     )
-                    ->placeholder('Belum di set')
                     ->searchable()
-                    ->preload()
-                    ->required(),
+                    ->placeholder('Pilih salah satu pertanyaan keamanan')
+                    ->searchPrompt('Ketik untuk mencari...'),
                 TextInput::make('a1')
-                    ->label('Jawaban Keamanan 1')
-                    ->placeholder('Belum di set')
-                    ->required(),
+                    ->label('Jawaban Keamanan 1'),
                 TextInput::make('a2')
-                    ->label('Jawaban Keamanan 2')
-                    ->placeholder('Belum di set')
-                    ->required(),
+                    ->label('Jawaban Keamanan 2'),
             ]);
     }
 
@@ -182,6 +195,8 @@ class UserDosenTendikResource extends Resource
                     ->sortable(),
                 TextColumn::make('email')
                     ->searchable(),
+
+                // ROLE & PERMISSIONS SPATIE (Utama)
                 TextColumn::make('roles.name')
                     ->label('Role (Guard)')
                     ->placeholder('Tidak ada role')
@@ -205,6 +220,22 @@ class UserDosenTendikResource extends Resource
 //                        // Spatie 'permissions' relationship hanya mengambil direct permissions
 //                        return $record->permissions->pluck('name')->implode(', ');
 //                    }),
+
+                // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
+                TextColumn::make('MasterGroup.NamaGroup')
+                    ->label('Role Legacy')
+                    ->placeholder('Tidak ada role')
+                    ->badge()
+                    ->color('secondary')
+                    ->searchable(),
+                TextColumn::make('MasterGroupPMB.NamaGroup')
+                    ->label('Privilege PMB')
+                    ->placeholder('Tidak ada role')
+                    ->badge()
+                    ->color('secondary')
+                    ->searchable(),
+
+                // Security Question
                 TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
                     ->label('Pertanyaan Keamanan 1')
                     ->placeholder('Belum di set')
