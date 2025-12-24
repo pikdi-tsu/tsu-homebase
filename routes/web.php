@@ -1,12 +1,37 @@
 <?php
 
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Livewire\HealthStatusPage;
 use Spatie\Health\Models\HealthCheckResultHistoryItem;
 use App\Http\Controllers\Auth\CustomPasswordResetLinkController;
 use App\Http\Controllers\Auth\CustomNewPasswordController;
+use App\Http\Controllers\Api\V1\SsoController;
 
 Route::get('/', static fn() => redirect()->route('dashboard'));
+
+// Authorization Grant Test Route
+Route::get('/test-callback', static function (Request $request) {
+    $code = $request->code ?? '';
+
+    if (!$code) {
+        return response()->json(['error' => 'Kode tidak ditemukan! Login gagal.'], 400);
+    }
+
+    $response = '';
+
+    try {
+        $response = \Illuminate\Support\Facades\Http::withoutVerifying()->asForm()->post(config('app.url') . '/oauth/token', [
+            'grant_type' => 'authorization_code',
+            'client_id' => config('passport.authorization_grant_client.id'),
+            'client_secret' => config('passport.authorization_grant_client.secret'),
+            'redirect_uri' => config('app.url') . '/test-callback',
+            'code' => $code,
+        ]);
+    } catch (\Illuminate\Http\Client\ConnectionException $e) {}
+
+    return $response->json();
+});
 
 Route::get('/dashboard', function () {
     // 1. Dapatkan UUID dari batch pemeriksaan terakhir

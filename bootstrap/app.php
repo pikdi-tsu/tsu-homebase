@@ -26,32 +26,29 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // 1. Handler untuk Database Down (QueryException)
+        // Handler untuk Database Down (QueryException)
         $exceptions->renderable(function (\Illuminate\Database\QueryException $e, $request) {
-            // Tampilkan halaman error khusus jika database down
             return response()->view('errors.503', [], 503);
         });
 
-        // 2. Handler untuk Akses Ditolak (403 Forbidden)
+        // Handler untuk Akses Ditolak (403 Forbidden)
         $exceptions->renderable(function (HttpException $e, $request) {
             // Cek apakah status kodenya adalah 403 (Forbidden)
-            if ($e->getStatusCode() === 403) {
-                // Cek apakah user sudah login DAN sedang mencoba akses panel admin
-                if (Auth::check() && $request->is('admin/*')) {
-                    // Jika ini adalah request halaman biasa (bukan aksi dari tombol/AJAX)
-                    if (!$request->ajax() && !$request->header('X-Livewire')) {
-                        // Alihkan ke dashboard Jetstream
-                        return redirect()->route('dashboard');
-                    }
-                    // Untuk request aksi (AJAX/Livewire), tetap tampilkan TOAST
-                    Notification::make()
-                        ->title('Aksi Ditolak')
-                        ->body('Anda tidak memiliki hak akses yang diperlukan.')
-                        ->danger()
-                        ->send();
-
-                    return redirect()->back();
+            // Cek apakah user sudah login DAN sedang mencoba akses panel admin
+            if (($e->getStatusCode() === 403) && Auth::check() && $request->is('admin/*')) {
+                // Jika ini adalah request halaman biasa (bukan aksi dari tombol/AJAX)
+                if (!$request->ajax() && !$request->header('X-Livewire')) {
+                    // Alihkan ke dashboard Jetstream
+                    return redirect()->route('dashboard');
                 }
+                // Untuk request aksi (AJAX/Livewire), tetap tampilkan TOAST
+                Notification::make()
+                    ->title('Aksi Ditolak')
+                    ->body('Anda tidak memiliki hak akses yang diperlukan.')
+                    ->danger()
+                    ->send();
+
+                return redirect()->back();
             }
             return null;
         });

@@ -51,18 +51,21 @@ class FortifyServiceProvider extends ServiceProvider
             return new class implements LoginResponse {
                 public function toResponse($request): \Illuminate\Http\RedirectResponse
                 {
-                    if (auth()->user()->hasRole('admin|super admin')) {
+                    $user = auth()->user();
+
+                    if ($user->hasRole('admin|super admin')) {
                         return redirect()->intended('/admin');
                     }
                     // Langsung logout user tersebut
-                    Auth::logout();
+//                    Auth::logout();
 
                     // Tambahkan notifikasi error ke session
-                    $request->session()->flash('error', 'Anda tidak memiliki hak akses untuk masuk ke sistem ini.');
+//                    $request->session()->flash('error', 'Anda tidak memiliki hak akses untuk masuk ke sistem ini.');
 
                     // Kembalikan ke halaman login
-                    return redirect()->route('login');
-//                    return redirect()->intended(config('fortify.home'));
+//                    return redirect()->route('login');
+//                    return redirect()->route('dashboard');
+                    return redirect()->intended(config('fortify.home'));
                 }
             };
         });

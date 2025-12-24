@@ -1,14 +1,13 @@
 <?php
 
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\UserDosenTendikController;
-use App\Http\Controllers\Api\AuthController;
-use App\Http\Controllers\Api\V1\UserProfileController;
-use App\Http\Controllers\Api\V1\UserController;
-use App\Http\Controllers\Api\V1\RoleController;
-use App\Http\Controllers\Api\V1\PermissionController;
+use App\Http\Controllers\Api\V1\AuthController;
 use App\Http\Controllers\Api\V1\AuthorizationController;
+use App\Http\Controllers\Api\V1\PermissionController;
+use App\Http\Controllers\Api\V1\RoleController;
+use App\Http\Controllers\Api\V1\UserController;
+use App\Http\Controllers\Api\V1\UserProfileController;
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\V1\SsoController;
 
 //Route::get('/user', function (Request $request) {
 //    return $request->user();
@@ -27,6 +26,7 @@ use App\Http\Controllers\Api\V1\AuthorizationController;
 
 // --- Endpoints Otentikasi (Publik) ---
 Route::prefix('v1/auth')->group(function () {
+    // Password Grant
     Route::post('/login/dosen-tendik', [AuthController::class, 'loginDosenTendik']);
     Route::post('/login/mahasiswa', [AuthController::class, 'loginMahasiswa']);
     Route::post('/refresh', [AuthController::class, 'refreshToken']);
@@ -39,7 +39,7 @@ Route::prefix('v1/auth')->group(function () {
 
 
 // --- Endpoints Profil (Untuk User yang Sudah Login) ---
-Route::middleware('auth:api,ap  i2')->prefix('v1')->group(function () {
+Route::middleware('auth:api,api2')->prefix('v1')->group(function () {
     Route::get('/me', [AuthController::class, 'getMe'])->middleware('auth:api');
     Route::get('/profile', [UserProfileController::class, 'show']);
     Route::put('/profile', [UserProfileController::class, 'update']);

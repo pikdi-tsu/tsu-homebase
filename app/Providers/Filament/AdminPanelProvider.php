@@ -6,6 +6,7 @@ use App\Filament\Widgets\LastLoggedInUsersDosenTendikWidget;
 use App\Filament\Widgets\LastLoggedInUsersMahasiswaWidget;
 use App\Filament\Widgets\LatestUsersDosenTendikWidget;
 use App\Filament\Widgets\LatestUsersMahasiswaWidget;
+use App\Filament\Widgets\UserCompositionChart;
 use App\Filament\Widgets\UserStatsOverview;
 use Filament\Actions\Action;
 use Filament\Http\Middleware\Authenticate;
@@ -72,11 +73,12 @@ class AdminPanelProvider extends PanelProvider
             ->pages([
                 Dashboard::class,
             ])
-            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
+//            ->discoverWidgets(in: app_path('Filament/Widgets'), for: 'App\Filament\Widgets')
             ->widgets([
 //                AccountWidget::class,
 //                FilamentInfoWidget::class,
                 UserStatsOverview::class,
+                UserCompositionChart::class,
                 LatestUsersDosenTendikWidget::class,
                 LatestUsersMahasiswaWidget::class,
                 LastLoggedInUsersDosenTendikWidget::class,

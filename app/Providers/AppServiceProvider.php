@@ -43,7 +43,7 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('super admin') ? true : null;
         });
 
-        Passport::authorizationView('auth.oauth.authorize');
+        Passport::authorizationView('vendor.passport.authorize');
         Passport::enablePasswordGrant();
         Passport::tokensExpireIn(now()->addHours(8)); // Access Token berlaku 8 jam
         Passport::refreshTokensExpireIn(now()->addDays(30)); // Refresh Token berlaku 30 hari

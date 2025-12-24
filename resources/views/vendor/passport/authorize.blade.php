@@ -2,7 +2,9 @@
 <x-guest-layout>
     <x-authentication-card>
         <x-slot name="logo">
-            <x-authentication-card-logo />
+            <a href="{{ route('dashboard') }}" class="flex justify-center">
+                <img src="{{ asset('images/icon-logo-tsu.png') }}" alt="Ikon Tiga Serangkai University" width="40px" />
+            </a>
         </x-slot>
 
         <div class="mb-4 text-center">

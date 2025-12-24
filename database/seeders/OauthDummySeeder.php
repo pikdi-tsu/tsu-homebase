@@ -18,7 +18,6 @@ class OauthDummySeeder extends Seeder
             'name' => 'Client Credentials Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['client_credentials'],
             'revoked' => false,
         ]);
@@ -26,7 +25,6 @@ class OauthDummySeeder extends Seeder
             'name' => 'Password Grant Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['password', 'refresh_token'],
             'revoked' => false,
         ]);
@@ -34,7 +32,7 @@ class OauthDummySeeder extends Seeder
             'name' => 'Authorization Code Access Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-            'redirect_uris' => ['https://localhost/callback'],
+            'redirect_uris' => ['https://tsu-homebase.test/test-callback'],
             'grant_types' => ['authorization_code'],
             'revoked' => false,
         ]);
@@ -42,9 +40,39 @@ class OauthDummySeeder extends Seeder
             'name' => 'Personal Access Token Test',
             'secret' => Str::random(40),
             'provider' => 'users',
-//            'redirect_uris' => ['https://localhost/callback'],
             'grant_types' => ['personal_access'],
             'revoked' => false,
         ]);
+
+        // Oauth TSU Template
+//        OauthCLient::query()->create([
+//            'name' => 'Client Credentials Access TSU Template',
+//            'secret' => Str::random(40),
+//            'provider' => 'users',
+//            'grant_types' => ['client_credentials'],
+//            'revoked' => false,
+//        ]);
+//        OauthCLient::query()->create([
+//            'name' => 'Password Grant Access TSU Template',
+//            'secret' => Str::random(40),
+//            'provider' => 'users',
+//            'grant_types' => ['password', 'refresh_token'],
+//            'revoked' => false,
+//        ]);
+        OauthCLient::query()->create([
+            'name' => 'Authorization Code Access TSU Template',
+            'secret' => Str::random(40),
+            'provider' => 'users',
+            'redirect_uris' => ['http://tsu-template.test/login/sso/callback'],
+            'grant_types' => ['authorization_code'],
+            'revoked' => false,
+        ]);
+//        OauthCLient::query()->create([
+//            'name' => 'Personal Access Token TSU Template',
+//            'secret' => Str::random(40),
+//            'provider' => 'users',
+//            'grant_types' => ['personal_access'],
+//            'revoked' => false,
+//        ]);
     }
 }
