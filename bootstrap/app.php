@@ -5,6 +5,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Filament\Notifications\Notification;
+use League\OAuth2\Server\Exception\OAuthServerException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -50,6 +51,18 @@ return Application::configure(basePath: dirname(__DIR__))
 
                 return redirect()->back();
             }
+            return null;
+        });
+
+        $exceptions->render(function (LogicException $e, Request $request) {
+
+            // Cek pesan errornya spesifik soal Key
+            if (str_contains($e->getMessage(), 'Invalid key supplied')) {
+                // Return tampilan cantik, atau redirect ke halaman error custom
+                return response()->view('errors.500', [], 500);
+            }
+
+            // Biarkan error lain lewat (atau handle juga)
             return null;
         });
     })->create();

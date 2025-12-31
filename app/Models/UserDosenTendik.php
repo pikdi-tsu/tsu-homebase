@@ -68,6 +68,7 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
      * @var array<int, string>
      */
     protected $appends = [
+        'user_type'
 //        'profile_photo_url',
     ];
 
@@ -82,6 +83,11 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getUserTypeAttribute(): string
+    {
+        return 'dosen_tendik';
     }
 
     public function backupData(): BelongsTo

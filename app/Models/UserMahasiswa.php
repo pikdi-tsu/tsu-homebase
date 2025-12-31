@@ -55,6 +55,7 @@ class UserMahasiswa extends Authenticatable
 
     protected $appends = [
 //        'profile_photo_url',
+        'user_type'
     ];
 
     protected function casts(): array
@@ -63,6 +64,11 @@ class UserMahasiswa extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getUserTypeAttribute(): string
+    {
+        return 'mahasiswa';
     }
 
     public function MasterGroup()

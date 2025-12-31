@@ -2,8 +2,12 @@
 
 namespace App\Providers;
 
+use App\Extensions\SmartUserProvider;
 use App\Health\IndonesianWindowsDiskSpaceCheck;
+use App\Health\PassportKeysCheck;
 use App\Http\Responses\LoginResponse;
+use App\Models\Passport\Client;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Schema;
 use Laravel\Fortify\Contracts\LoginResponse as LoginResponseContract;
 use App\Listeners\CheckUserRoleAfterLogin;
@@ -43,6 +47,11 @@ class AppServiceProvider extends ServiceProvider
             return $user->hasRole('super admin') ? true : null;
         });
 
+        Auth::provider('smart_eloquent', static function ($app, array $config) {
+            return new SmartUserProvider($app['hash'], $config['model']);
+        });
+
+        Passport::useClientModel(Client::class);
         Passport::authorizationView('vendor.passport.authorize');
         Passport::enablePasswordGrant();
         Passport::tokensExpireIn(now()->addHours(8)); // Access Token berlaku 8 jam
@@ -75,6 +84,7 @@ class AppServiceProvider extends ServiceProvider
             IndonesianWindowsDiskSpaceCheck::new()
                 ->warnWhenUsedSpaceIsAbovePercentage(60)
                 ->failWhenUsedSpaceIsAbovePercentage(85),
+            PassportKeysCheck::new(),
         ]);
     }
 }
