@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -24,8 +25,12 @@ class UserMahasiswa extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
+    use HasUuids;
 
     protected $table = 'users_mahasiswa';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     protected $fillable = [
         'nim',

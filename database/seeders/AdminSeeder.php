@@ -16,10 +16,10 @@ class AdminSeeder extends Seeder
      */
     public function run(): void
     {
-        $pertanyaanPanggilan = PertanyaanKeamanan::where('id', 2)->first();
-        $pertanyaanMakanan = PertanyaanKeamanan::where('id', 7)->first();
+        $pertanyaanPanggilan = PertanyaanKeamanan::query()->where('id', 2)->first();
+        $pertanyaanMakanan = PertanyaanKeamanan::query()->where('id', 7)->first();
 
-        $admin1 = UserDosenTendik::firstOrCreate(
+        $admin1 = UserDosenTendik::query()->firstOrCreate(
                 [
                     'email' => 'bertha@tsu.ac.id',
                 ],
@@ -27,14 +27,14 @@ class AdminSeeder extends Seeder
                     'nik' => '202025119',
                     'name' => 'Bertha Pratama Adhita Putra, S.Kom',
                     'password' => Hash::make('Nerro600'),
-                    'q1' => $pertanyaanPanggilan->id,
+                    'q1' => $pertanyaanPanggilan?->id,
                     'a1' => 'bertha',
-                    'q2' => $pertanyaanMakanan->id,
+                    'q2' => $pertanyaanMakanan?->id,
                     'a2' => 'magelangan',
                     'created_by' => '202025119',
                 ]);
 
-        $admin2 = UserDosenTendik::firstOrCreate(
+        $admin2 = UserDosenTendik::query()->firstOrCreate(
                 [
                     'email' => 'ancasea@tsu.ac.id',
                 ],
@@ -42,9 +42,9 @@ class AdminSeeder extends Seeder
                     'nik' => '202025109',
                     'name' => 'Ancase Rekasae Suryo Dwi Raharjo, S.Kom',
                     'password' => Hash::make('ancas@241'),
-                    'q1' => $pertanyaanPanggilan->id,
+                    'q1' => $pertanyaanPanggilan?->id,
                     'a1' => 'ancasea',
-                    'q2' => $pertanyaanMakanan->id,
+                    'q2' => $pertanyaanMakanan?->id,
                     'a2' => 'endog',
                     'created_by' => '202025109',
                 ]);
@@ -57,9 +57,9 @@ class AdminSeeder extends Seeder
                     'nik' => '623048003',
                     'name' => 'Bramasto Wiryawan Yudanto, S.T.,M.MSI.',
                     'password' => Hash::make('bramasto@123#'),
-                    'q1' => $pertanyaanPanggilan->id,
+                    'q1' => $pertanyaanPanggilan?->id,
                     'a1' => 'bramasto',
-                    'q2' => $pertanyaanMakanan->id,
+                    'q2' => $pertanyaanMakanan?->id,
                     'a2' => 'nasi goreng',
                     'created_by' => '623048003',
                 ]);
@@ -67,8 +67,11 @@ class AdminSeeder extends Seeder
         // Berikan role 'admin' ke user tersebut
         $superAdminRole = Role::query()->where('name', 'super admin')->first();
         $adminRole = Role::query()->where('name', 'admin')->first();
-        $admin1->assignRole($adminRole);
-        $admin2->assignRole($superAdminRole);
-        $admin3->assignRole($adminRole);
+
+        if ($superAdminRole && $adminRole) {
+            $admin1->assignRole($adminRole);
+            $admin2->assignRole($superAdminRole);
+            $admin3->assignRole($adminRole);
+        }
     }
 }

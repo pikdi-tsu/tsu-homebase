@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('oauth_clients', function (Blueprint $table) {
+        Schema::create('oauth_clients', static function (Blueprint $table) {
             $table->uuid('id')->primary();
             $table->nullableMorphs('owner');
             $table->string('name');
@@ -19,7 +19,8 @@ return new class extends Migration
             $table->string('provider')->nullable();
             $table->text('redirect_uris')->nullable();
             $table->text('grant_types');
-            $table->boolean('revoked');
+            $table->boolean('first_party')->default(false);
+            $table->boolean('revoked')->default(false);
             $table->timestamps();
         });
     }

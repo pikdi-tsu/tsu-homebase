@@ -18,8 +18,8 @@ class MahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        $loggedAdmin = UserDosenTendik::query()->where('id', '2')->value('nik');
-        $mahasiswa1 = UserMahasiswa::firstOrCreate(
+        $loggedAdmin = UserDosenTendik::query()->where('email', 'bertha@tsu.ac.id')->value('nik');
+        $mahasiswa1 = UserMahasiswa::query()->firstOrCreate(
                 [
                     'email' => 'mahasiswa1@tsu.ac.id',
                 ],

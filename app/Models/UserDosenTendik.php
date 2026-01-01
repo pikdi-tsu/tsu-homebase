@@ -4,6 +4,7 @@ namespace App\Models;
 
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -23,8 +24,12 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable
     use TwoFactorAuthenticatable;
     use HasRoles;
     use HasApiTokens;
+    use HasUuids;
 
     protected $table = 'users_dosen_tendik';
+
+    public $incrementing = false;
+    protected $keyType = 'string';
 
     /**
      * The attributes that are mass assignable.

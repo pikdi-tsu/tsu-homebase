@@ -35,6 +35,55 @@ class OauthClientsTable
                     ->label('Tipe Grant')
                     ->badge()
                     ->color('secondary'),
+                ToggleColumn::make('first_party')
+                    ->label('Auto Approve') // Label yang muncul di header
+                    ->onColor('success')    // Hijau kalau Aktif
+                    ->offColor('gray')      // Abu-abu kalau Mati
+                    ->tooltip('Jika ON: User langsung login tanpa ditanya "Izinkan Aplikasi?"')
+                    ->sortable()
+                    ->disabled(function ($record) {
+                        // 1. Ambil data grant_types (karena bentuknya array/json)
+                        // Kita cast ke array biar aman kalau datanya string JSON
+                        $grants = $record->grant_types;
+                        if (is_string($grants)) {
+                            $grants = json_decode($grants, true, 512, JSON_THROW_ON_ERROR) ?? [];
+                        }
+
+                        // 2. Cek apakah ini Personal atau Password
+                        // (Pakai in_array karena isinya ["personal_access"] dsb)
+                        if (in_array('personal_access', $grants, true)) {
+                            return true;
+                        }
+                        if (in_array('password', $grants, true)) {
+                            return true;
+                        }
+
+                        // 3. Cek Redirect URI
+                        // Perhatikan: Nama kolom di DB kamu 'redirect_uris'
+                        // Kita cek attribute 'redirect_uris', kalau gak ada baru coba 'redirect'
+                        $redirect = $record->redirect_uris ?? $record->redirect;
+
+                        return blank($redirect);
+                    })
+                    ->tooltip(function ($record) {
+                        // Logika tooltip juga harus ngikutin yang atas
+                        $grants = $record->grant_types;
+                        if (is_string($grants)) {
+                            $grants = json_decode($grants, true) ?? [];
+                        }
+
+                        if (in_array('personal_access', $grants, true)) {
+                            return 'Tidak tersedia untuk Personal Access';
+                        }
+                        if (in_array('password', $grants, true)) {
+                            return 'Tidak tersedia untuk Password Grant';
+                        }
+
+                        $redirect = $record->redirect_uris ?? $record->redirect;
+                        if (blank($redirect)) return 'Client Credentials (Tanpa Redirect) tidak butuh Auto Approve';
+
+                        return 'Aktifkan agar user tidak perlu klik tombol "Approve" manual.';
+                    }),
                 ToggleColumn::make('revoked')
                     ->label('Akses Dicabut')
                     ->onColor('success')

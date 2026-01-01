@@ -63,7 +63,7 @@ class OauthDummySeeder extends Seeder
             'name' => 'Authorization Code Access TSU Template',
             'secret' => Str::random(40),
             'provider' => 'users',
-            'redirect_uris' => ['http://tsu-template.test/login/sso/callback'],
+            'redirect_uris' => ['https://tsu-project-template.test/login/sso/callback'],
             'grant_types' => ['authorization_code'],
             'revoked' => false,
         ]);
