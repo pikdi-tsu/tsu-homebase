@@ -43,6 +43,7 @@ Route::middleware('auth:api,api2')->prefix('v1')->group(function () {
     Route::get('/me', [AuthController::class, 'getMe'])->middleware('auth:api');
     Route::get('/profile', [UserProfileController::class, 'show']);
     Route::put('/profile', [UserProfileController::class, 'update']);
+    Route::post('/profile/change-photo', [UserProfileController::class, 'updatePhoto']);
     Route::post('/profile/change-password', [UserProfileController::class, 'changePassword']);
 });
 

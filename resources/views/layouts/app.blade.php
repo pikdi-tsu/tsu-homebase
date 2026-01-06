@@ -21,6 +21,9 @@
         <meta name="apple-mobile-web-app-title" content="TSU Homebase" />
         <link rel="manifest" href="{{ asset('images/favicon/site.webmanifest') }}" />
 
+        <!-- Image Profile Cropper -->
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.css" />
+
         <!-- Scripts -->
         <x-head-theme-script />
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -52,5 +55,8 @@
         @stack('modals')
 
         @livewireScripts
+
+        <!-- Image Profile Cropper -->
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/cropperjs/1.5.13/cropper.min.js"></script>
     </body>
 </html>

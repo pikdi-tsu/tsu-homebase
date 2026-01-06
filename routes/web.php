@@ -33,7 +33,37 @@ Route::get('/test-callback', static function (Request $request) {
     return $response->json();
 });
 
-Route::get('/dashboard', function () {
+Route::get('/oauth/authorize', static function (Request $request) {
+    // Cek client reevoked
+    $clientId = $request->query('client_id');
+    $client = DB::table('oauth_clients')->where('id', $clientId)->first();
+    if (!$client || $client->revoked) {
+        return response()->view('errors.index', [
+            'message' => 'Maaf, Akses Aplikasi ini telah DIBEKUKAN atau DICABUT oleh PIKDI TSU.',
+            'code' => 403
+        ], 403);
+    }
+
+    // Cek user disabled
+    $user = $request->user();
+    if ($user && !$user->isactive) {
+
+        return response()->view('errors.index', [
+            'title' => 'Akun Non-Aktif',
+            'message' => 'Mohon maaf, Akun TSU Anda saat ini sedang DINONAKTIFKAN. Silakan hubungi Bagian SDM/PIKDI.',
+            'code' => 403
+        ], 403);
+    }
+
+    // "Hidupkan" Controller-nya (Resolve Instance)
+    $controller = app(\Laravel\Passport\Http\Controllers\AuthorizationController::class);
+
+    // Laravel otomatis mengisikan parameter yang kurang (Request, Response, dll)
+    return app()->call([$controller, 'authorize']);
+
+})->middleware(['web', 'auth']);
+
+Route::get('/dashboard', static function () {
     // 1. Dapatkan UUID dari batch pemeriksaan terakhir
     $latestBatch = HealthCheckResultHistoryItem::query()->latest()->value('batch');
 

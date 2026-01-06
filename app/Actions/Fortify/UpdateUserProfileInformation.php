@@ -18,9 +18,18 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(UserDosenTendik $user, array $input): void
     {
+//        if (isset($input['photo'])) {
+//            dd($input['photo']);
+//            // Kalau file fisiknya GAK ADA atau ERROR, kita hapus dari $input
+//            // Supaya Validator tidak mencoba mengecek ukurannya (yg bikin crash)
+//            if ($input['photo']->getError() !== UPLOAD_ERR_OK || !file_exists($input['photo']->getRealPath())) {
+//                unset($input['photo']);
+//            }
+//        }
+
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],
-            'email' => ['required', 'email', 'max:255', Rule::unique('users')->ignore($user->id)],
+            'email' => ['required', 'email', 'max:255', Rule::unique($user->getTable())->ignore($user->id)],
             'photo' => ['nullable', 'mimes:jpg,jpeg,png', 'max:1024'],
         ])->validateWithBag('updateProfileInformation');
 
@@ -44,7 +53,7 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      *
      * @param  array<string, string>  $input
      */
-    protected function updateVerifiedUser(User $user, array $input): void
+    protected function updateVerifiedUser(UserDosenTendik $user, array $input): void
     {
         $user->forceFill([
             'name' => $input['name'],
