@@ -28,7 +28,7 @@ class CreateUserMahasiswa extends CreateRecord
             Grid::make()
                 ->columns(2) // Buat 2 kolom
                 ->schema([
-                    TextInput::make('nim')
+                    TextInput::make('username')
                         ->label('Nomor Induk Mahasiswa')
                         ->placeholder('Masukkan NIM Mahasiswa')
                         ->required(),
@@ -42,6 +42,10 @@ class CreateUserMahasiswa extends CreateRecord
                         ->unique(ignoreRecord: true)
                         ->columnSpanFull()
                         ->required(),
+                    TextInput::make('unit')
+                        ->label('Department')
+                        ->placeholder('Masukkan Tempat Unit Mahasiswa')
+                        ->columnSpanFull(),
 
                     // ROLE & PERMISSIONS SPATIE (Utama)
                     Select::make('roles')

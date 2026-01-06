@@ -18,7 +18,7 @@ class LastLoggedInUsersMahasiswaWidget extends TableWidget
         return $table
             ->query(fn (): Builder => UserMahasiswa::query()->orderBy('last_login_at', 'desc')->limit(5))
             ->columns([
-                TextColumn::make('nim')
+                TextColumn::make('username')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('name')

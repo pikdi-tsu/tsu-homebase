@@ -71,7 +71,7 @@ return [
 
     'providers' => [
         'users' => [
-            'driver' => 'eloquent',
+            'driver' => 'smart_eloquent',
             'model' => env('AUTH_MODEL', App\Models\UserDosenTendik::class),
         ],
 

@@ -42,7 +42,7 @@ class ImportMahasiswaAction extends CreateAction
                 Grid::make()
                     ->columns(2) // Buat 2 kolom
                     ->schema([
-                        Select::make('nim')
+                        Select::make('username')
                             ->label('NIM - Nama Mahasiswa')
                             ->placeholder('Pilih salah satu data Mahasiswa')
                             ->searchPrompt('Ketik NIM atau Nama untuk mencari...')
@@ -70,7 +70,6 @@ class ImportMahasiswaAction extends CreateAction
                                 $user = BackupUsersMahasiswa::query()->where('nim', $state)->first();
                                 if ($user) {
                                     $set('email', $user->email);
-                                    // $set('field_lain', $user->kolom_lain); // Tambahkan field lain jika ada
                                 } else {
                                     $set('email', 'Email tidak ditemukan di data backup');
                                 }
@@ -86,6 +85,11 @@ class ImportMahasiswaAction extends CreateAction
                             ->readonly()
                             ->columnSpanFull()
                             ->placeholder('Email akan terisi otomatis...'),
+                        TextInput::make('unit')
+                            ->label('Department')
+                            ->placeholder('Tempat Unit Mahasiswa akan terisi otomatis...')
+                            ->readonly()
+                            ->columnSpanFull(),
 
                         // ROLE & PERMISSIONS SPATIE (Utama)
                         Select::make('roles')
@@ -146,13 +150,13 @@ class ImportMahasiswaAction extends CreateAction
                     ]),
             ])
             ->using(function (array $data, $form): Model {
-                $nim = $data['nim'];
+                $nim = $data['username'];
                 $backupUser = BackupUsersMahasiswa::query()->where('nim', $nim)->first();
 
                 $data['name'] = Str::title(strtolower($backupUser->nama));
 
                 $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
-                $data['created_by'] = Auth::user()->nik;
+                $data['created_by'] = Auth::user()->username;
 
                 $rolesIds = $data['roles'] ?? [];
 

@@ -57,7 +57,7 @@ return [
 
         'mail' => [
 //            'to' => 'your@example.com',
-            'to' => 'admin@tsu.ac.id',
+            'to' => env('MAIL_TO_ADDRESS', 'pikdi@tsu.ac.id'),
 
             'from' => [
                 'address' => env('MAIL_FROM_ADDRESS', 'hello@example.com'),

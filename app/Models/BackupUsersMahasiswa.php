@@ -15,7 +15,7 @@ class BackupUsersMahasiswa extends Model
     use Notifiable;
     use HasRoles;
 
-    protected $table = 'data_backup_mahasiswa';
+    protected $table = 'backup_users_mahasiswa';
 
     protected $fillable = [
         "periode_masuk",
@@ -79,8 +79,7 @@ class BackupUsersMahasiswa extends Model
     protected function namaLengkapDanNim(): Attribute
     {
         return Attribute::make(
-        // `get` akan dijalankan setiap kali kita memanggil $dosen->nama_lengkap_dan_nik
-            get: fn () => "{$this->nim} - {$this->nama}", // Sesuaikan 'nama_dosen' dan 'nik' dengan nama kolom di tabelmu
+            get: fn () => "{$this->nim} - {$this->nama}",
         );
     }
 }

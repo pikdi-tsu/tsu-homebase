@@ -5,6 +5,9 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Symfony\Component\HttpKernel\Exception\HttpException;
 use Filament\Notifications\Notification;
+use League\OAuth2\Server\Exception\OAuthServerException;
+use Illuminate\Http\Request;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -26,33 +29,78 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        // 1. Handler untuk Database Down (QueryException)
-        $exceptions->renderable(function (\Illuminate\Database\QueryException $e, $request) {
-            // Tampilkan halaman error khusus jika database down
-            return response()->view('errors.503', [], 503);
+        // Handler untuk Database Down (QueryException)
+        $exceptions->render(function (\Illuminate\Database\QueryException $e, $request) {
+            return response()->view('errors.index', [
+                'message' => 'Sistem sedang dalam perbaikan rutin. Silakan coba lagi nanti.',
+                'code' => 503
+            ], 503);
         });
 
-        // 2. Handler untuk Akses Ditolak (403 Forbidden)
-        $exceptions->renderable(function (HttpException $e, $request) {
-            // Cek apakah status kodenya adalah 403 (Forbidden)
-            if ($e->getStatusCode() === 403) {
-                // Cek apakah user sudah login DAN sedang mencoba akses panel admin
-                if (Auth::check() && $request->is('admin/*')) {
-                    // Jika ini adalah request halaman biasa (bukan aksi dari tombol/AJAX)
-                    if (!$request->ajax() && !$request->header('X-Livewire')) {
-                        // Alihkan ke dashboard Jetstream
-                        return redirect()->route('dashboard');
-                    }
-                    // Untuk request aksi (AJAX/Livewire), tetap tampilkan TOAST
-                    Notification::make()
-                        ->title('Aksi Ditolak')
-                        ->body('Anda tidak memiliki hak akses yang diperlukan.')
-                        ->danger()
-                        ->send();
-
-                    return redirect()->back();
+        // Handler untuk Akses Ditolak (403 Forbidden)
+        $exceptions->render(function (HttpException $e, $request) {
+            if (($e->getStatusCode() === 403) && Auth::check() && $request->is('admin/*')) {
+                if (!$request->ajax() && !$request->header('X-Livewire')) {
+                    return redirect()->route('dashboard');
                 }
+
+                Notification::make()
+                    ->title('Aksi Ditolak')
+                    ->body('Anda tidak memiliki hak akses.')
+                    ->danger()
+                    ->send();
+
+                return redirect()->back(); // Atau return null
             }
+            return null;
+        });
+
+        // Handler untuk Invalid Key (LogicException)
+        $exceptions->render(function (LogicException $e, Request $request) {
+            if (str_contains($e->getMessage(), 'Invalid key supplied')) {
+                return response()->view('errors.index', [
+                    'message' => 'Akses Aplikasi ini tidak dikenali, laporkan ke PIKDI TSU.',
+                    'code' => 500
+                ], 500);
+            }
+            return null;
+        });
+
+        // Handler untuk SSO CLIENT ERROR (OAuthServerException)
+        $exceptions->render(function (OAuthServerException $e, Request $request) {
+            // Cek apakah errornya tipe "invalid_client" (Client ID salah atau Revoked)
+            if ($e->getErrorType() === 'invalid_client') {
+
+                // Jika user buka lewat Browser
+                if (! $request->expectsJson()) {
+                    return response()->view('errors.index', [
+                        'message' => 'Akses Aplikasi ini telah DIBEKUKAN atau DICABUT oleh PIKDI TSU.',
+                        'code' => 403
+                    ], 403);
+                }
+
+                // Jika user buka lewat API (JSON)
+                return response()->json([
+                    'error' => 'Unauthorized',
+                    'message' => 'Akses Client dibekukan/dicabut.',
+                    'status_code' => 401
+                ], 401);
+            }
+            return null;
+        });
+
+        // Handler untuk halaman not found
+        $exceptions->render(function (NotFoundHttpException $e, Request $request) {
+            if (! $request->expectsJson() && View::exists('errors.index')) {
+
+                return response()->view('errors.index', [
+                    'title' => 'Halaman Tidak Ditemukan',
+                    'message' => 'Halaman yang Anda cari tidak ditemukan atau telah dipindahkan.',
+                    'code' => 404,
+                    'exception' => $e
+                ], 404);
+            }
+
             return null;
         });
     })->create();

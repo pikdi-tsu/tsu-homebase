@@ -32,4 +32,9 @@ class EditUserDosenTendik extends EditRecord
 
         return $actions;
     }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Perubahan Data Karyawan Berhasil Disimpan!';
+    }
 }

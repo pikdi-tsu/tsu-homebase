@@ -10,45 +10,129 @@
     <x-slot name="form">
         <!-- Profile Photo -->
         @if (Laravel\Jetstream\Jetstream::managesProfilePhotos())
-            <div x-data="{photoName: null, photoPreview: null}" class="col-span-6 sm:col-span-4">
-                <!-- Profile Photo File Input -->
-                <input type="file" id="photo" class="hidden"
-                            wire:model.live="photo"
-                            x-ref="photo"
-                            x-on:change="
-                                    photoName = $refs.photo.files[0].name;
-                                    const reader = new FileReader();
-                                    reader.onload = (e) => {
-                                        photoPreview = e.target.result;
-                                    };
-                                    reader.readAsDataURL($refs.photo.files[0]);
-                            " />
+            <div x-data="{
+                            photoName: null,
+                            photoPreview: null,
+                            showCropModal: false,
+                            imageToCrop: null,
+                            cropper: null,
+                            wire: @this
+                         }"
+             class="col-span-6 sm:col-span-4">
+
+                <input type="file"
+                       class="hidden"
+                       x-ref="photo"
+                       id="photo"
+                       accept="image/*"
+                       x-on:change="
+                        const file = $refs.photo.files[0];
+                        if (file) {
+                        photoName = file.name;
+                        const reader = new FileReader();
+                        reader.onload = (e) => {
+                            imageToCrop = e.target.result;
+                            showCropModal = true;
+
+                            // Init Cropper
+                            setTimeout(() => {
+                                if (cropper) cropper.destroy();
+                                const image = document.getElementById('image-to-crop');
+                                cropper = new Cropper(image, {
+                                    aspectRatio: 1 / 1,
+                                    viewMode: 1,
+                                    dragMode: 'move',
+                                    autoCropArea: 1,
+                                    cropBoxMovable: false,
+                                    cropBoxResizable: false,
+                                    toggleDragModeOnDblclick: false,
+                                });
+                            }, 100);
+                        };
+                        reader.readAsDataURL(file);
+                    }
+               " />
 
                 <x-label for="photo" value="{{ __('Photo') }}" />
 
-                <!-- Current Profile Photo -->
                 <div class="mt-2" x-show="! photoPreview">
-                    <img src="{{ $this->user->profile_photo_url }}" alt="{{ $this->user->name }}" class="rounded-full size-20 object-cover">
+                    <img src="{{ Auth::user()->profile_photo_url }}" alt="{{ Auth::user()->name }}" style="width: 80px; height: 80px; display: block;" class="rounded-full h-20 w-20 object-cover">
                 </div>
 
-                <!-- New Profile Photo Preview -->
                 <div class="mt-2" x-show="photoPreview" style="display: none;">
-                    <span class="block rounded-full size-20 bg-cover bg-no-repeat bg-center"
-                          x-bind:style="'background-image: url(\'' + photoPreview + '\');'">
-                    </span>
+                    {{-- Kita pakai tag IMG biasa biar lebih stabil baca datanya --}}
+                    <img x-bind:src="photoPreview"
+                         style="width: 80px; height: 80px; display: block;"
+                         class="block rounded-full object-cover shadow-md border-4 border-white dark:border-gray-700" alt="Foto Profil {{ Auth::user()->name }}" src="">
                 </div>
 
-                <x-secondary-button class="mt-2 me-2" type="button" x-on:click.prevent="$refs.photo.click()">
+                <x-secondary-button class="mt-2 mr-2" type="button" x-on:click.prevent="$refs.photo.click()">
                     {{ __('Select A New Photo') }}
                 </x-secondary-button>
 
-                @if ($this->user->profile_photo_path)
+                @if (Auth::user()->profile_photo_path)
                     <x-secondary-button type="button" class="mt-2" wire:click="deleteProfilePhoto">
                         {{ __('Remove Photo') }}
                     </x-secondary-button>
                 @endif
 
                 <x-input-error for="photo" class="mt-2" />
+
+                {{-- 👇👇👇 MODAL CROPPER MANUAL (PURE ALPINE) 👇👇👇 --}}
+                <div x-show="showCropModal"
+                                     style="display: none;"
+                                     class="fixed inset-0 z-50 overflow-y-auto px-4 py-6 sm:px-0"
+                                     {{-- 👇 TAMBAHKAN BARIS INI 👇 --}}
+                                     x-on:crop-success.window="
+                        showCropModal = false;
+                        photoPreview = $event.detail.preview;
+                        if(cropper) { cropper.destroy(); cropper = null; }
+                        document.getElementById('photo').value = null;
+                     ">
+
+                    {{-- Backdrop (Klik luar = Batal) --}}
+                    <div x-show="showCropModal" class="fixed inset-0 transform transition-all"
+                         x-on:click="showCropModal = false; document.getElementById('photo').value = null">
+                        <div class="absolute inset-0 bg-gray-500 opacity-75"></div>
+                    </div>
+
+                    {{-- Konten Modal --}}
+                    <div x-show="showCropModal"
+                         class="mb-6 bg-white dark:bg-gray-800 rounded-lg overflow-hidden shadow-xl transform transition-all sm:w-full sm:max-w-lg sm:mx-auto relative z-50">
+                        <div class="px-6 py-4">
+                            <div class="text-lg font-medium text-gray-900 dark:text-gray-100">
+                                Sesuaikan Foto
+                            </div>
+                            <div class="mt-4">
+                                {{-- Container Gambar --}}
+                                <div class="img-container w-full h-80 bg-black flex items-center justify-center overflow-hidden rounded-lg relative">
+                                    <img id="image-to-crop" :src="imageToCrop" class="block max-w-full">
+                                </div>
+                            </div>
+                        </div>
+                        {{-- Footer Tombol --}}
+                        <div class="px-6 py-4 bg-gray-100 dark:bg-gray-700 flex flex-row justify-end items-center gap-3 relative z-50">
+
+                            {{-- Tombol Batal --}}
+                            <x-secondary-button type="button" style="position: relative; z-index: 100; cursor: pointer;"
+                                    x-on:click="
+                                        showCropModal = false;
+                                        if (cropper) { cropper.destroy(); cropper = null; }
+                                        document.getElementById('photo').value = null;
+                            ">
+                                Batal
+                            </x-secondary-button>
+
+                            {{-- TOMBOL TERAPKAN --}}
+                            <x-button type="button" class="ml-0"
+                                      style="position: relative; z-index: 100;"
+                                      x-on:click="processCrop(cropper, wire, $el)">
+                                Terapkan
+                            </x-button>
+                        </div>
+                    </div>
+                </div>
+
             </div>
         @endif
 
@@ -93,3 +177,81 @@
         </x-button>
     </x-slot>
 </x-form-section>
+
+<script>
+    function processCrop(cropper, component, button) {
+        // 1. Cek Kesiapan
+        if (!cropper) {
+            alert('Cropper belum siap. Silakan coba lagi.');
+            return;
+        }
+
+        // 2. Kunci Tombol
+        button.innerText = 'Memproses...';
+        button.disabled = true;
+
+        // 3. Ambil Gambar dari Canvas (Ukuran 300x300px)
+        // Kita pakai 'high' quality biar tajam di retina display
+        const canvas = cropper.getCroppedCanvas({
+            width: 300,
+            height: 300,
+            imageSmoothingQuality: 'high'
+        });
+
+        if (!canvas) {
+            alert('Gagal membuat gambar.');
+            resetButton(button);
+            return;
+        }
+
+        // 4. Konversi Canvas ke File (Blob JPG kualitas 0.8)
+        canvas.toBlob((blob) => {
+            if (!blob) {
+                alert('Gagal konversi file.');
+                resetButton(button);
+                return;
+            }
+
+            // Kita kasih nama "avatar.jpg" biar server tau ini gambar!
+            const file = new File([blob], "avatar.jpg", { type: "image/jpeg" });
+
+            // 5. Mulai Upload ke Livewire (Temporary)
+            component.upload('photo', file,
+                (uploadedFilename) => {
+                    // === SUKSES UPLOAD ===
+
+                    // A. Baca Blob jadi Data URL buat Preview (FIX BINGKAI HILANG)
+                    const reader = new FileReader();
+                    reader.onloadend = () => {
+                        // B. Kirim sinyal sukses beserta data previewnya ke HTML
+                        window.dispatchEvent(new CustomEvent('crop-success', {
+                            detail: { preview: reader.result } // Kirim Data URL lengkap
+                        }));
+
+                        // C. Reset tombol
+                        resetButton(button);
+                    };
+                    // Mulai baca file
+                    reader.readAsDataURL(blob);
+                },
+                (error) => {
+                    // === GAGAL UPLOAD ===
+                    console.error(error);
+                    alert('Gagal Upload ke Server. Cek koneksi internet.');
+                    resetButton(button);
+                },
+                (event) => {
+                    // === PROGRESS BERJALAN ===
+                    // FIX TEKS ANEH: Kita ubah jadi teks simpel aja
+                    button.innerText = 'Mengupload...';
+                }
+            );
+        }, 'image/jpeg', 0.8);
+    }
+
+    // Fungsi pembantu untuk mereset tombol
+    function resetButton(button) {
+        button.disabled = false;
+        button.innerText = 'Terapkan';
+    }
+</script>

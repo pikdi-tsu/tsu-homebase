@@ -15,8 +15,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('users_mahasiswa', function (Blueprint $table) {
-            $table->id();
-            $table->bigInteger('nim')->unique();
+            $table->uuid('id')->primary();
             $this->addCommonUserColumns($table);
         });
     }

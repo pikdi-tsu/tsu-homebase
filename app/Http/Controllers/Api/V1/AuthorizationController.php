@@ -12,7 +12,7 @@ class AuthorizationController extends Controller
     public function getUserPermissions($id)
     {
         // Cari user di kedua tabel
-        $user = UserDosenTendik::query()->where('nik', $id) ?? UserMahasiswa::query()->where('nim', $id);
+        $user = UserDosenTendik::query()->where('username', $id) ?? UserMahasiswa::query()->where('username', $id);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan'], 404);

@@ -30,7 +30,8 @@ class ListUserMahasiswa extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            ImportMahasiswaAction::make(),
+            ImportMahasiswaAction::make()
+                ->successNotificationTitle('Import User Dosen/Tendik berhasil ditambahkan'),
 
             CreateAction::make()
                 ->label('input Manual Mahasiswa')
@@ -43,7 +44,7 @@ class ListUserMahasiswa extends ListRecords
                 ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi'))
                 ->using(function (array $data, Form $form): Model {
                     $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
-                    $data['created_by'] = Auth::user()->nik;
+                    $data['created_by'] = Auth::user()->username;
 
                     $rolesIds = $data['roles'] ?? [];
 

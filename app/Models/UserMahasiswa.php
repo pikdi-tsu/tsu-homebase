@@ -3,17 +3,19 @@
 namespace App\Models;
 
 use Database\Factories\UserFactory;
+use Illuminate\Database\Eloquent\Concerns\HasUuids;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Laravel\Jetstream\HasProfilePhoto;
-//use Laravel\Sanctum\HasApiTokens;
+use Laravel\Passport\Contracts\OAuthenticatable;
 use Laravel\Passport\HasApiTokens;
 use Spatie\Permission\Traits\HasRoles;
+use Filament\Models\Contracts\HasAvatar;
 
-class UserMahasiswa extends Authenticatable
+class UserMahasiswa extends Authenticatable implements OAuthenticatable, HasAvatar
 {
 
     use HasApiTokens;
@@ -24,14 +26,21 @@ class UserMahasiswa extends Authenticatable
     use Notifiable;
     use TwoFactorAuthenticatable;
     use HasRoles;
+    use HasApiTokens;
+    use HasUuids;
 
     protected $table = 'users_mahasiswa';
 
+    public $incrementing = false;
+    protected $keyType = 'string';
+
     protected $fillable = [
-        'nim',
+        'username',
         'name',
         'email',
         'password',
+        'profile_photo_path',
+        'unit',
         'role_access',
         'privilege_pmb',
         'q1',
@@ -54,7 +63,8 @@ class UserMahasiswa extends Authenticatable
     ];
 
     protected $appends = [
-//        'profile_photo_url',
+        'user_type',
+        'profile_photo_url',
     ];
 
     protected function casts(): array
@@ -63,6 +73,25 @@ class UserMahasiswa extends Authenticatable
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
         ];
+    }
+
+    public function getUserTypeAttribute(): string
+    {
+        return 'mahasiswa';
+    }
+
+    protected function defaultProfilePhotoUrl()
+    {
+        $name = trim(collect(explode(' ', $this->name))->map(function ($segment) {
+            return mb_substr($segment, 0, 1);
+        })->join(' '));
+
+        return 'https://ui-avatars.com/api/?name='.urlencode($name).'&color=FFFFFF&background=2d394a';
+    }
+
+    public function getFilamentAvatarUrl(): ?string
+    {
+        return $this->profile_photo_url;
     }
 
     public function MasterGroup()
