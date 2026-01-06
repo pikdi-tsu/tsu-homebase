@@ -19,7 +19,7 @@ class BackupUsersDosenTendik extends Model
     use Notifiable;
     use HasRoles;
 
-    protected $table = 'data_backup_pegawai';
+    protected $table = 'backup_users_dosen_tendik';
 
     protected $fillable = [
         'nip',
@@ -44,7 +44,7 @@ class BackupUsersDosenTendik extends Model
     public function UsersDosenTendikData(): BelongsTo
     {
         // Relasi dari kolom 'nik' di tabel ini ke kolom 'nip' di tabel backup
-        return $this->belongsTo(UserDosenTendik::class, 'nip', 'nik');
+        return $this->belongsTo(UserDosenTendik::class, 'nip', 'username');
     }
 
     protected function namaLengkapDanNip(): Attribute

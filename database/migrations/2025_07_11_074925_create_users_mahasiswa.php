@@ -16,7 +16,6 @@ return new class extends Migration
     {
         Schema::create('users_mahasiswa', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->bigInteger('nim')->unique();
             $this->addCommonUserColumns($table);
         });
     }

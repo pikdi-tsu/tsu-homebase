@@ -14,10 +14,13 @@ trait HasCommonUserColumns
      */
     protected function addCommonUserColumns(Blueprint $table): void
     {
+        $table->bigInteger('username')->unique()->comment('Username Berisi NIM/NIK');
         $table->string('name');
         $table->string('email')->nullable()->unique();
         $table->timestamp('email_verified_at')->nullable();
         $table->string('password');
+        $table->string('profile_photo_path', 2048)->nullable();
+        $table->string('unit')->nullable();
         $table->string('role_access')->nullable();
         $table->string('privilege_pmb')->nullable();
         $table->rememberToken();

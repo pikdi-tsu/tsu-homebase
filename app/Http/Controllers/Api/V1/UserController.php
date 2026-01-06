@@ -68,7 +68,7 @@ class UserController extends Controller
     public function show(Request $request, $id)
     {
         // Di sini kita asumsikan ID unik di kedua tabel atau perlu parameter tambahan
-        $user = UserDosenTendik::query()->where('nik', $id) ?? UserMahasiswa::query()->where('nim', $id);
+        $user = UserDosenTendik::query()->where('username', $id) ?? UserMahasiswa::query()->where('username', $id);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan'], 404);
@@ -83,7 +83,7 @@ class UserController extends Controller
     public function update(Request $request, string $id)
     {
         // Coba cari user di kedua tabel
-        $user = UserDosenTendik::query()->where('nik', $id) ?? UserMahasiswa::query()->where('nim', $id);
+        $user = UserDosenTendik::query()->where('username', $id) ?? UserMahasiswa::query()->where('username', $id);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan'], 404);
@@ -106,7 +106,7 @@ class UserController extends Controller
      */
     public function destroy(string $id)
     {
-        $user = UserDosenTendik::query()->where('nik', $id) ?? UserMahasiswa::query()->where('nim', $id);
+        $user = UserDosenTendik::query()->where('username', $id) ?? UserMahasiswa::query()->where('username', $id);
 
         if (!$user) {
             return response()->json(['message' => 'User tidak ditemukan'], 404);

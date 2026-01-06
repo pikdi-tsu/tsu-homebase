@@ -16,7 +16,7 @@ return new class extends Migration
     {
         Schema::create('users_dosen_tendik', function (Blueprint $table) {
             $table->uuid('id')->primary();
-            $table->bigInteger('nik')->unique();
+            $table->bigInteger('nidn')->unique()->nullable();
             $this->addCommonUserColumns($table);
         });
 

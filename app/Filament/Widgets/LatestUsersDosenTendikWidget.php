@@ -23,7 +23,7 @@ class LatestUsersDosenTendikWidget extends TableWidget
         return $table
             ->query(fn (): Builder => UserDosenTendik::query()->latest()->limit(5))
             ->columns([
-                TextColumn::make('nik')
+                TextColumn::make('username')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('name')

@@ -18,42 +18,44 @@ class MahasiswaSeeder extends Seeder
      */
     public function run(): void
     {
-        $loggedAdmin = UserDosenTendik::query()->where('email', 'bertha@tsu.ac.id')->value('nik');
+        $loggedAdmin = UserDosenTendik::query()->where('email', 'bertha@tsu.ac.id')->value('username');
         $mahasiswa1 = UserMahasiswa::query()->firstOrCreate(
                 [
                     'email' => 'mahasiswa1@tsu.ac.id',
                 ],
                 [
-                'nim' => '25100001',
+                'username' => '25100001',
                 'name' => 'Mahasiswa Satu',
                 'password' => resolve(DefaultPasswordService::class)->getDefaultHashedPassword(),
+                'unit' => 'Fakultas Teknik',
                 'created_by' => $loggedAdmin,
             ]);
 
-        $mahasiswa2 = UserMahasiswa::firstOrCreate(
+        $mahasiswa2 = UserMahasiswa::query()->firstOrCreate(
                 [
                     'email' => 'mahasiswa2@tsu.ac.id',
                 ],
                 [
-                'nim' => '25100002',
+                'username' => '25100002',
                 'name' => 'Mahasiswa Dua',
                 'password' => resolve(DefaultPasswordService::class)->getDefaultHashedPassword(),
+                'unit' => 'Fakultas Sains & Humaniora',
                 'created_by' => $loggedAdmin,
             ]);
 
-        $mahasiswa3 = UserMahasiswa::firstOrCreate(
+        $mahasiswa3 = UserMahasiswa::query()->firstOrCreate(
                     [
                         'email' => 'mahasiswa3@tsu.ac.id',
                     ],
                     [
-                    'nim' => '25100003',
+                    'username' => '25100003',
                     'name' => 'Mahasiswa Tiga',
                     'password' => resolve(DefaultPasswordService::class)->getDefaultHashedPassword(),
+                    'unit' => 'Sekolah Vokasi',
                     'created_by' => $loggedAdmin,
                 ]);
 
         $mahasiswaRole = Role::query()->where('name', 'mahasiswa')->first();
-        \Log::info($mahasiswaRole);
         $mahasiswa1->assignRole($mahasiswaRole);
         $mahasiswa2->assignRole($mahasiswaRole);
         $mahasiswa3->assignRole($mahasiswaRole);

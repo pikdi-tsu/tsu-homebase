@@ -18,7 +18,7 @@ class LastLoggedInUsersDosenTendikWidget extends TableWidget
         return $table
             ->query(fn (): Builder => UserDosenTendik::query()->orderBy('last_login_at', 'desc')->limit(5))
             ->columns([
-                TextColumn::make('nik')
+                TextColumn::make('username')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('name')

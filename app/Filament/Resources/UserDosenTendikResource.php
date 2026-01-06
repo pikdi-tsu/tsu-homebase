@@ -12,6 +12,7 @@ use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
@@ -50,7 +51,7 @@ class UserDosenTendikResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['nik', 'name', 'email'];
+        return ['username', 'name', 'email'];
     }
 
     /**
@@ -107,10 +108,13 @@ class UserDosenTendikResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('nik')
+                TextInput::make('username')
                     ->label('Nomor Induk Karyawan')
                     ->placeholder('Masukkan NIK Karyawan')
                     ->required(),
+                TextInput::make('nidn')
+                    ->label('Nomor Induk Dosen Nasional')
+                    ->placeholder('Masukkan NIDN Dosen'),
                 TextInput::make('name')
                     ->label('Nama Lengkap')
                     ->placeholder('Masukkan Nama dan Gelar')
@@ -121,6 +125,10 @@ class UserDosenTendikResource extends Resource
                     ->unique(ignoreRecord: true)
                     ->columnSpanFull()
                     ->required(),
+                TextInput::make('unit')
+                    ->label('Department')
+                    ->placeholder('Masukkan Tempat Unit Karyawan')
+                    ->columnSpanFull(),
 
                 // ROLE & PERMISSIONS SPATIE (Utama)
                 Select::make('roles')
@@ -185,15 +193,29 @@ class UserDosenTendikResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nik')
+                TextColumn::make('username')
                     ->label('NIK dosen/tendik')
                     ->searchable()
                     ->sortable(),
+                TextColumn::make('nidn')
+                    ->label('NIDN dosen')
+                    ->placeholder('Tidak ada NIDN')
+                    ->searchable()
+                    ->sortable(),
+                ImageColumn::make('profile_photo_path')
+                    ->label('Foto Profil')
+                        ->disk('public')
+                        ->circular()
+                        ->defaultImageUrl(fn ($record) => $record->profile_photo_url),
                 TextColumn::make('name')
                     ->label('Nama Dosen/Tendik')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('unit')
+                    ->label('Department')
+                    ->placeholder('Tidak ada tempat unit')
                     ->searchable(),
 
                 // ROLE & PERMISSIONS SPATIE (Utama)
@@ -303,7 +325,8 @@ class UserDosenTendikResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->successNotificationTitle('Data Karyawan berhasil dihapus dari sistem!'),
                 ]),
             ]);
     }

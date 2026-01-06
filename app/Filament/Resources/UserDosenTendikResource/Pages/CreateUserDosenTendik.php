@@ -36,20 +36,26 @@ class CreateUserDosenTendik extends CreateRecord
             Grid::make()
                 ->columns(2) // Buat 2 kolom
                 ->schema([
-                    TextInput::make('nik')
+                    TextInput::make('username')
                         ->label('Nomor Induk Karyawan')
                         ->placeholder('Masukkan NIK Karyawan')
                         ->required(),
+                    TextInput::make('nidn')
+                        ->label('Nomor Induk Dosen Nasional')
+                        ->placeholder('Masukkan NIDN Dosen'),
                     TextInput::make('name')
                         ->label('Nama Lengkap')
                         ->placeholder('Masukkan Nama dan Gelar')
+                        ->columnSpanFull()
                         ->required(),
                     TextInput::make('email')
                         ->email()
                         ->placeholder('Masukkan Email TSU')
                         ->unique(ignoreRecord: true)
-                        ->columnSpanFull()
                         ->required(),
+                    TextInput::make('unit')
+                        ->label('Department')
+                        ->placeholder('Masukkan Tempat Unit Karyawan'),
 
                     // ROLE & PERMISSIONS SPATIE (Utama)
                     Select::make('roles')

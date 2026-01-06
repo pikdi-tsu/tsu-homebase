@@ -33,7 +33,8 @@ class ListUserDosenTendik extends ListRecords
     protected function getHeaderActions(): array
     {
         return [
-            ImportDosenTendikAction::make(),
+            ImportDosenTendikAction::make()
+                ->successNotificationTitle('Import User Dosen/Tendik berhasil ditambahkan'),
 
             CreateAction::make()
                 ->label('Input Manual Dosen/Tendik')
@@ -46,7 +47,7 @@ class ListUserDosenTendik extends ListRecords
                 ->schema(CreateUserDosenTendik::getCreateFormSchema())
                 ->using(function (array $data, $form): Model {
                     $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
-                    $data['created_by'] = Auth::user()->nik;
+                    $data['created_by'] = Auth::user()->username;
 
                     $rolesIds = $data['roles'] ?? [];
 

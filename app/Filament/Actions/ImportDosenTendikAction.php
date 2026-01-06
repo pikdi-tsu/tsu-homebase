@@ -41,7 +41,7 @@ class ImportDosenTendikAction extends CreateAction
                 Grid::make()
                     ->columns(2) // Buat 2 kolom
                     ->schema([
-                        Select::make('nik')
+                        Select::make('username')
                             ->label('NIK - Nama Dosen/Tendik')
                             ->placeholder('Ketik NIK atau Nama untuk mencari...')
                             ->getSearchResultsUsing(function (string $search) {
@@ -65,24 +65,38 @@ class ImportDosenTendikAction extends CreateAction
                             ->afterStateUpdated(function ($state, callable $set) {
                                 if (is_null($state)) {
                                     $set('email', null);
+                                    $set('nidn', null);
+                                    $set('unit', null);
                                     return;
                                 }
 
                                 $user = BackupUsersDosenTendik::query()->where('nip', $state)->first();
                                 if ($user) {
                                     $set('email', $user->email_kampus);
+                                    $set('nidn', $user->nidn);
+                                    $set('unit', $user->homebase);
                                 } else {
                                     $set('email', 'Email tidak ditemukan di data backup');
+                                    $set('nidn', 'NIDN tidak ditemukan di data backup');
+                                    $set('unit', 'Tempat unit tidak ditemukan di data backup');
                                 }
                             }),
+                        TextInput::make('nidn')
+                            ->label('Nomor Induk Dosen Nasional')
+                            ->placeholder('jika ada NIDN akan terisi otomatis...')
+                            ->readonly()
+                            ->dehydrated(false),
                         TextInput::make('email')
                             ->email()
                             ->required()
                             ->maxLength(255)
                             ->readonly()
-                            ->columnSpanFull()
                             ->placeholder('Email akan terisi otomatis...')
                             ->dehydrated(false),
+                        TextInput::make('unit')
+                            ->label('Department')
+                            ->placeholder('Jika ada tempat unit karyawan akan terisi otomatis...')
+                            ->columnSpanFull(),
 
                         // ROLE & PERMISSIONS SPATIE (Utama)
                         Select::make('roles')
@@ -143,7 +157,7 @@ class ImportDosenTendikAction extends CreateAction
                     ]),
             ])
             ->using(function (array $data, $form): Model {
-                $nik = $data['nik'];
+                $nik = $data['username'];
                 $backupUser = BackupUsersDosenTendik::query()->where('nip', $nik)->first();
 
                 if ($backupUser) {
@@ -164,7 +178,7 @@ class ImportDosenTendikAction extends CreateAction
                 }
 
                 $data['password'] = (new DefaultPasswordService())->getDefaultHashedPassword();
-                $data['created_by'] = Auth::user()->nik;
+                $data['created_by'] = Auth::user()->username;
 
                 $rolesIds = $data['roles'] ?? [];
                 // Bersihkan field dummy

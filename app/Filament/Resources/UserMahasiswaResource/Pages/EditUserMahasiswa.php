@@ -33,4 +33,9 @@ class EditUserMahasiswa extends EditRecord
 
         return $actions;
     }
+
+    protected function getSavedNotificationTitle(): ?string
+    {
+        return 'Perubahan Data Mahasiswa Berhasil Disimpan!';
+    }
 }

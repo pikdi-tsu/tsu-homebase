@@ -23,7 +23,7 @@ class LatestUsersMahasiswaWidget extends TableWidget
         return $table
             ->query(fn (): Builder => UserMahasiswa::query()->latest()->limit(5))
             ->columns([
-                TextColumn::make('nim')
+                TextColumn::make('username')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('name')

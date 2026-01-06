@@ -7,6 +7,7 @@ use App\Models\PertanyaanKeamanan;
 use App\Models\PrivilegePMB;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
+use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Actions\EditAction;
 use Filament\Actions\BulkActionGroup;
@@ -41,7 +42,7 @@ class UserMahasiswaResource extends Resource
 
     public static function getGloballySearchableAttributes(): array
     {
-        return ['nim', 'name', 'email'];
+        return ['username', 'name', 'email'];
     }
 
     public static function canViewAny(): bool
@@ -68,7 +69,7 @@ class UserMahasiswaResource extends Resource
     {
         return $schema
             ->components([
-                TextInput::make('nim')
+                TextInput::make('username')
                     ->label('Nomor Induk Mahasiswa')
                     ->placeholder('Masukkan NIM Mahasiswa')
                     ->required(),
@@ -83,6 +84,10 @@ class UserMahasiswaResource extends Resource
                     ->maxLength(255)
                     ->columnSpanFull()
                     ->required(),
+                TextInput::make('unit')
+                    ->label('Department')
+                    ->placeholder('Masukkan Tempat Unit Mahasiswa')
+                    ->columnSpanFull(),
 
                 // ROLE & PERMISSIONS SPATIE (Utama)
                 Select::make('roles')
@@ -145,15 +150,24 @@ class UserMahasiswaResource extends Resource
     {
         return $table
             ->columns([
-                TextColumn::make('nim')
+                TextColumn::make('username')
                     ->label('NIM mahasiswa')
                     ->searchable()
                     ->sortable(),
+                ImageColumn::make('profile_photo_path')
+                    ->label('Foto Profil')
+                    ->disk('public')
+                    ->circular()
+                    ->defaultImageUrl(fn ($record) => $record->profile_photo_url),
                 TextColumn::make('name')
                     ->label('Nama Mahasiswa')
                     ->searchable()
                     ->sortable(),
                 TextColumn::make('email')
+                    ->searchable(),
+                TextColumn::make('unit')
+                    ->label('Department')
+                    ->placeholder('Tidak ada tempat unit')
                     ->searchable(),
 
                 // ROLE & PERMISSIONS SPATIE (Utama)
@@ -240,7 +254,9 @@ class UserMahasiswaResource extends Resource
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
-                    DeleteBulkAction::make(),
+                    DeleteBulkAction::make()
+                        ->successNotificationTitle('Data Mahasiswaberhasil dihapus dari sistem!'),
+
                 ]),
             ]);
     }
