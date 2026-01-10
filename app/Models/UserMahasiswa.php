@@ -51,6 +51,7 @@ class UserMahasiswa extends Authenticatable implements OAuthenticatable, HasAvat
         'created_by',
         'updated_by',
         'isactive',
+        'last_seen_at',
     ];
 
     protected $hidden = [
@@ -72,6 +73,7 @@ class UserMahasiswa extends Authenticatable implements OAuthenticatable, HasAvat
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen_at' => 'datetime',
         ];
     }
 

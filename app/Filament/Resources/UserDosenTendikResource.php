@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Actions\SharedRemoteLogin;
+use App\Filament\Columns\StatusOnlineColumn;
 use App\Models\MasterGroup;
 use App\Models\Module;
 use App\Models\ModuleAccessLog;
@@ -33,8 +34,8 @@ use Filament\Resources\Resource;
 use Filament\Tables;
 use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Table;
-use Filament\Resources\Pages\Page; // Jangan lupa tambahkan ini di atas
-use Filament\Resources\Pages\CreateRecord; // dan ini juga
+use Filament\Resources\Pages\Page;
+use Filament\Resources\Pages\CreateRecord;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
@@ -262,24 +263,25 @@ class UserDosenTendikResource extends Resource
                     ->searchable(),
 
                 // Security Question
-                TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
-                    ->label('Pertanyaan Keamanan 1')
-                    ->placeholder('Belum di set')
-                    ->formatStateUsing(fn (string $state): string => "{$state}?")
-                    ->searchable(),
-                TextColumn::make('a1')
-                    ->label('Jawaban Keamanan 1')
-                    ->placeholder('Belum di set')
-                    ->searchable(),
-                TextColumn::make('pertanyaanKeamananDua.pertanyaan')
-                    ->label('Pertanyaan Keamanan 2')
-                    ->placeholder('Belum di set')
-                    ->formatStateUsing(fn (string $state): string => "{$state}?")
-                    ->searchable(),
-                TextColumn::make('a2')
-                    ->label('Jawaban Keamanan 2')
-                    ->placeholder('Belum di set')
-                    ->searchable(),
+//                TextColumn::make('pertanyaanKeamananSatu.pertanyaan')
+//                    ->label('Pertanyaan Keamanan 1')
+//                    ->placeholder('Belum di set')
+//                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+//                    ->searchable(),
+//                TextColumn::make('a1')
+//                    ->label('Jawaban Keamanan 1')
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+//                TextColumn::make('pertanyaanKeamananDua.pertanyaan')
+//                    ->label('Pertanyaan Keamanan 2')
+//                    ->placeholder('Belum di set')
+//                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+//                    ->searchable(),
+//                TextColumn::make('a2')
+//                    ->label('Jawaban Keamanan 2')
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+                StatusOnlineColumn::make(),
                 ToggleColumn::make('isactive')
                     ->label('Aktif')
                     ->onColor('success')

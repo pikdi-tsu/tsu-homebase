@@ -6,6 +6,7 @@ use App\Http\Controllers\Api\V1\PermissionController;
 use App\Http\Controllers\Api\V1\RoleController;
 use App\Http\Controllers\Api\V1\UserController;
 use App\Http\Controllers\Api\V1\UserProfileController;
+use App\Http\Middleware\LogSsoActivity;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\V1\SsoController;
 
@@ -39,8 +40,8 @@ Route::prefix('v1/auth')->group(function () {
 
 
 // --- Endpoints Profil (Untuk User yang Sudah Login) ---
-Route::middleware('auth:api,api2')->prefix('v1')->group(function () {
-    Route::get('/me', [AuthController::class, 'getMe'])->middleware('auth:api');
+Route::middleware('auth:api,api2', LogSsoActivity::class)->prefix('v1')->group(function () {
+    Route::get('/me', [AuthController::class, 'getMe']);
     Route::get('/profile', [UserProfileController::class, 'show']);
     Route::put('/profile', [UserProfileController::class, 'update']);
     Route::post('/profile/change-photo', [UserProfileController::class, 'updatePhoto']);
