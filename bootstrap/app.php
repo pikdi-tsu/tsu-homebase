@@ -27,6 +27,9 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->appendToGroup('api', [
             \App\Http\Middleware\CheckUserIsActive::class,
         ]);
+        $middleware->web(append: [
+            \App\Http\Middleware\RecordLastActivity::class,
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
         // Handler untuk Database Down (QueryException)

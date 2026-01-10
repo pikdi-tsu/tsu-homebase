@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('url');
+            $table->string('passport_client_id')->nullable();
             $table->boolean('isactive')->default(true);
             $table->timestamps();
         });

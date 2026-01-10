@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Modules\Tables;
 
+use App\Models\Passport\Client;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
@@ -22,6 +23,13 @@ class ModulesTable
                 TextColumn::make('url')
                     ->icon('heroicon-o-link')
                     ->searchable(),
+                TextColumn::make('passportClient.name')
+                ->label('Aplikasi Client (SSO)')
+                    ->description(fn ($record) => 'ID: ' . $record->passport_client_id)
+                    ->placeholder('Belum terhubung')
+                    ->icon('heroicon-m-key')
+                    ->copyable()
+                    ->sortable(),
                 IconColumn::make('isactive')
                     ->boolean(),
                 TextColumn::make('created_at')

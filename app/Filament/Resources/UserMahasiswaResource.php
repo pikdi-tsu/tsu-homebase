@@ -3,6 +3,7 @@
 namespace App\Filament\Resources;
 
 use App\Filament\Actions\SharedRemoteLogin;
+use App\Filament\Columns\StatusOnlineColumn;
 use App\Models\MasterGroup;
 use App\Models\Module;
 use App\Models\ModuleAccessLog;
@@ -227,24 +228,25 @@ class UserMahasiswaResource extends Resource
                     ->searchable(),
 
                 // Security Question
-                TextColumn::make('q1')
-                    ->label('Pertanyaan Keamanan 1')
-                    ->formatStateUsing(fn (string $state): string => "{$state}?")
-                    ->placeholder('Belum di set')
-                    ->searchable(),
-                TextColumn::make('a1')
-                    ->label('Jawaban Keamanan 1')
-                    ->placeholder('Belum di set')
-                    ->searchable(),
-                TextColumn::make('q2')
-                    ->label('Pertanyaan Keamanan 2')
-                    ->formatStateUsing(fn (string $state): string => "{$state}?")
-                    ->placeholder('Belum di set')
-                    ->searchable(),
-                TextColumn::make('a2')
-                    ->label('Jawaban Keamanan 2')
-                    ->placeholder('Belum di set')
-                    ->searchable(),
+//                TextColumn::make('q1')
+//                    ->label('Pertanyaan Keamanan 1')
+//                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+//                TextColumn::make('a1')
+//                    ->label('Jawaban Keamanan 1')
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+//                TextColumn::make('q2')
+//                    ->label('Pertanyaan Keamanan 2')
+//                    ->formatStateUsing(fn (string $state): string => "{$state}?")
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+//                TextColumn::make('a2')
+//                    ->label('Jawaban Keamanan 2')
+//                    ->placeholder('Belum di set')
+//                    ->searchable(),
+                StatusOnlineColumn::make(),
                 ToggleColumn::make('isactive')
                     ->label('Aktif')
                     ->onColor('success')

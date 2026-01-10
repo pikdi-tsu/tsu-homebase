@@ -33,5 +33,6 @@ trait HasCommonUserColumns
         $table->string('updated_by')->nullable();
         $table->timestamps();
         $table->tinyInteger('isactive')->default(1);
+        $table->timestamp('last_seen_at')->nullable();
     }
 }

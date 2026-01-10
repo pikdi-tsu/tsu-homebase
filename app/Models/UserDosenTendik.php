@@ -55,6 +55,7 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable, HasAv
         'created_by',
         'updated_by',
         'isactive',
+        'last_seen_at',
     ];
 
     /**
@@ -91,6 +92,7 @@ class UserDosenTendik extends Authenticatable implements OAuthenticatable, HasAv
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_seen_at' => 'datetime',
         ];
     }
 
