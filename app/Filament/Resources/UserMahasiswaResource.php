@@ -2,9 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\SharedRemoteLogin;
 use App\Models\MasterGroup;
+use App\Models\Module;
+use App\Models\ModuleAccessLog;
 use App\Models\PertanyaanKeamanan;
 use App\Models\PrivilegePMB;
+use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Schemas\Schema;
 use Filament\Forms\Components\TextInput;
 use Filament\Tables\Columns\ImageColumn;
@@ -251,6 +256,7 @@ class UserMahasiswaResource extends Resource
             ->recordActions([
                 EditAction::make()
                     ->color('warning'),
+                SharedRemoteLogin::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
