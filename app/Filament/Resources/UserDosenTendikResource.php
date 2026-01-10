@@ -2,10 +2,14 @@
 
 namespace App\Filament\Resources;
 
+use App\Filament\Actions\SharedRemoteLogin;
 use App\Models\MasterGroup;
+use App\Models\Module;
+use App\Models\ModuleAccessLog;
 use App\Models\PertanyaanKeamanan;
 use App\Models\PrivilegePMB;
 use Filament\Actions\Action;
+use Filament\Actions\ActionGroup;
 use Filament\Actions\CreateAction;
 use Filament\Notifications\Notification;
 use Filament\Schemas\Components\Utilities\Get;
@@ -321,7 +325,8 @@ class UserDosenTendikResource extends Resource
                             ])
                             ->success()
                             ->send();
-                    })
+                    }),
+                SharedRemoteLogin::make(),
             ])
             ->toolbarActions([
                 BulkActionGroup::make([
