@@ -41,8 +41,10 @@ class StatusOnlineColumn
             ->first();
 
         // BANDINGKAN WAKTU
-        $isRemoteActive = $lastRemoteLog && now()->diffInMinutes($lastRemoteLog->accessed_at) < $sessionLifetime;
-        $isHomebaseActive = $lastSeen && now()->diffInMinutes($lastSeen) < $activeThreshold;
+        $diffMinutes = $lastRemoteLog ? abs(now()->diffInMinutes($lastRemoteLog->accessed_at)) : 9999;
+        $homebaseDiff = $lastSeen ? abs(now()->diffInMinutes($lastSeen)) : 9999;
+        $isRemoteActive = $lastRemoteLog && $diffMinutes < $sessionLifetime;
+        $isHomebaseActive = $lastSeen && $homebaseDiff < $activeThreshold;
         $moduleName = $lastRemoteLog->module->name ?? 'Aplikasi Belum Terdaftar';
 
         // Skenario aktif di Module
@@ -77,12 +79,12 @@ class StatusOnlineColumn
         }
 
         // Skenario IDLE di Homebase
-        if ($lastSeen && now()->diffInMinutes($lastSeen) < $sessionLifetime) {
+        if ($lastSeen && $homebaseDiff < $sessionLifetime) {
             return [
                 'status'  => 'Idle',
                 'color'   => 'gray',
                 'icon'    => 'heroicon-m-clock',
-                'tooltip' => "Masih login tapi tidak aktif.\nSisa sesi: " . ($sessionLifetime - now()->diffInMinutes($lastSeen)) . " menit lagi.",
+                'tooltip' => "User masih login, tapi tidak aktif.\nSisa sesi: " . ($sessionLifetime - $homebaseDiff) . " menit lagi.",
             ];
         }
 
