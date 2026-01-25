@@ -18,30 +18,52 @@ class PermissionSeeder extends Seeder
         app()[\Spatie\Permission\PermissionRegistrar::class]->forgetCachedPermissions();
 
         // Permissions untuk Homebase Core
-        Permission::create(['name' => 'homebase:oauth-client:manage', 'guard_name' => 'web']);
-        Permission::create(['name' => 'homebase:permission:manage', 'guard_name' => 'web']);
-        Permission::create(['name' => 'homebase:role:manage', 'guard_name' => 'web']);
-        Permission::create(['name' => 'homebase:pertanyaan-keamanan:manage', 'guard_name' => 'web']);
-        Permission::create(['name' => 'homebase:user-dosen-tendik:view-any', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:oauth-client:view', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:oauth-client:create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:oauth-client:edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:oauth-client:delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:module:view', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:module:create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:module:edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:module:delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:role:view', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:role:create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:role:edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:role:delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:permission:view', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:permission:create', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:permission:edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:permission:delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:pertanyaan-keamanan:view', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:pertanyaan-keamanan:crate', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:pertanyaan-keamanan:edit', 'guard_name' => 'web']);
+        Permission::create(['name' => 'homebase:pertanyaan-keamanan:delete', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:user-dosen-tendik:view', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-dosen-tendik:create', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-dosen-tendik:update', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-dosen-tendik:delete', 'guard_name' => 'web']);
-        Permission::create(['name' => 'homebase:user-mahasiswa:view-any', 'guard_name' => 'web']);
+
+        Permission::create(['name' => 'homebase:user-mahasiswa:view', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-mahasiswa:create', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-mahasiswa:update', 'guard_name' => 'web']);
         Permission::create(['name' => 'homebase:user-mahasiswa:delete', 'guard_name' => 'web']);
-//        Permission::create(['name' => 'homebase:user-mahasiswa:view-any', 'guard_name' => 'api2']);
-//        Permission::create(['name' => 'homebase:user-mahasiswa:create', 'guard_name' => 'api2']);
-//        Permission::create(['name' => 'homebase:user-mahasiswa:update', 'guard_name' => 'api2']);
-//        Permission::create(['name' => 'homebase:user-mahasiswa:delete', 'guard_name' => 'api2']);
 
-//        // Permissions untuk modul Akademik (contoh masa depan)
-//        Permission::create(['name' => 'pmb:jadwal:view']);
-//        Permission::create(['name' => 'pmb:nilai:input']);
-
-        // Buat Role Admin dan berikan semua permission
+        Role::query()->where('name', 'super admin')->first();
         $adminRole = Role::query()->where('name', 'admin')->first();
-        $adminRole->givePermissionTo(Permission::all());
+        $adminRole->givePermissionTo([
+            'homebase:oauth-client:view',
+            'homebase:module:view',
+            'homebase:role:view',
+            'homebase:permission:view',
+            'homebase:pertanyaan-keamanan:view',
+            'homebase:user-dosen-tendik:view',
+            'homebase:user-mahasiswa:view'
+        ]);
 
 //        // Buat Role Dosen
 //        $dosenRole = Role::query()->where('name', 'dosen')->first();

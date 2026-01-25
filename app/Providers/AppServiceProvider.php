@@ -43,7 +43,6 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Gate::before(static function ($user, $ability) {
-            // Ganti 'admin' dengan nama role super admin Anda jika berbeda
             return $user->hasRole('super admin') ? true : null;
         });
 
@@ -58,7 +57,6 @@ class AppServiceProvider extends ServiceProvider
         Passport::refreshTokensExpireIn(now()->addDays(30)); // Refresh Token berlaku 30 hari
         Passport::personalAccessTokensExpireIn(now()->addMonths(6)); // Token pribadi berlaku 6 bulan
 
-        // Cek dulu apakah tabelnya ada, untuk mencegah error saat migrasi
         if (Schema::hasTable('permissions')) {
             $permissions = Permission::all()->pluck('name')->toArray();
             $scopes = array_fill_keys($permissions, 'Izin dinamis dari database');

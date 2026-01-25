@@ -73,6 +73,8 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
+        $role = Role::query()->findOrFail($id);
+
         // Melindungi role penting agar tidak bisa dihapus
         if (in_array($role->name, ['admin', 'super admin'])) {
             return response()->json(['message' => 'Role ini tidak dapat dihapus.'], 403);
@@ -81,5 +83,19 @@ class RoleController extends Controller
         $role->delete();
 
         return response()->json(null, 204);
+    }
+
+    public function syncList()
+    {
+        $roles = Role::query()->pluck('name');
+
+        return response()->json([
+            'meta' => [
+                'code' => 200,
+                'status' => 'success',
+                'message' => 'Role list for sync retrieved successfully.'
+            ],
+            'data' => $roles
+        ]);
     }
 }

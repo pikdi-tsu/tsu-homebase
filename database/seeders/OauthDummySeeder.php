@@ -45,13 +45,14 @@ class OauthDummySeeder extends Seeder
         ]);
 
         // Oauth TSU Template
-//        OauthCLient::query()->create([
-//            'name' => 'Client Credentials Access TSU Template',
-//            'secret' => Str::random(40),
-//            'provider' => 'users',
-//            'grant_types' => ['client_credentials'],
-//            'revoked' => false,
-//        ]);
+        OauthCLient::query()->create([
+            'name' => 'Client Credentials Access TSU Template',
+            'secret' => Str::random(40),
+            'provider' => 'users',
+            'grant_types' => ['client_credentials'],
+            'revoked' => false,
+        ]);
+
 //        OauthCLient::query()->create([
 //            'name' => 'Password Grant Access TSU Template',
 //            'secret' => Str::random(40),
@@ -59,6 +60,7 @@ class OauthDummySeeder extends Seeder
 //            'grant_types' => ['password', 'refresh_token'],
 //            'revoked' => false,
 //        ]);
+
         OauthCLient::query()->create([
             'name' => 'Authorization Code Access TSU Template',
             'secret' => Str::random(40),
@@ -67,6 +69,7 @@ class OauthDummySeeder extends Seeder
             'grant_types' => ['authorization_code'],
             'revoked' => false,
         ]);
+
 //        OauthCLient::query()->create([
 //            'name' => 'Personal Access Token TSU Template',
 //            'secret' => Str::random(40),

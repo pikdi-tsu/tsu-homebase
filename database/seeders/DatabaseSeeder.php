@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             PermissionSeeder::class,
             PertanyaanKeamananSeed::class,
             OauthDummySeeder::class,
+            ModuleSeeder::class,
             AdminSeeder::class,
             MahasiswaSeeder::class,
         ]);

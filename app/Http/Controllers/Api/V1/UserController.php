@@ -11,6 +11,63 @@ use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
+    public function getUsers(Request $request)
+    {
+        // Oauth security Check
+        $secret = config('app.pikdi.key.sync');
+        if ($request->header('X-Sync-Secret') !== $secret) {
+            return response()->json(['message' => 'Unauthorized'], 403);
+        }
+
+        // Ambil Dosen Tendik
+        $listDosenTendik = UserDosenTendik::query()->where('isactive', 1)->get();
+        $mappedDosen = $listDosenTendik->map(function ($row) {
+            $identityRole = (!empty($row->nidn) && $row->nidn !== '0') ? 'dosen' : 'tendik';
+            $spatieRoles = $row->getRoleNames()->toArray();
+            $allRoles = array_unique(array_merge([$identityRole], $spatieRoles));
+            return [
+                'id'                => $row->id,
+                'name'              => $row->name,
+                'username'          => (string) $row->username,
+                'email'             => $row->email,
+                'profile_photo_url' => $row->profile_photo_path,
+                'isactive'          => (bool) $row->isactive,
+                'roles'             => array_values($allRoles),
+                'nidn'              => $row->nidn,
+                'nik'               => $row->username,
+                'unit'              => $row->unit,
+            ];
+        });
+
+        // Ambil Mahasiswa
+        $listMhs = UserMahasiswa::query()->where('isactive', 1)->get();
+        $mappedMhs = $listMhs->map(function ($row) {
+            $identityRole = (!empty($row->nidn) && $row->nidn !== '0') ? 'dosen' : 'tendik';
+            $spatieRoles = $row->getRoleNames()->toArray();
+            $allRoles = array_unique(array_merge([$identityRole], $spatieRoles));
+            return [
+                'id'                => $row->id,
+                'name'              => $row->name,
+                'username'          => (string) $row->username,
+                'email'             => $row->email,
+                'profile_photo_url' => $row->profile_photo_path,
+                'isactive'          => (bool) $row->isactive,
+                'roles'             => array_values($allRoles),
+                'nim'               => (string) $row->username,
+                'unit'              => $row->unit,
+            ];
+        });
+
+        // Merge Data User
+        $finalData = $mappedDosen->merge($mappedMhs);
+
+        return response()->json([
+            'status' => 'success',
+            'total'  => $finalData->count(),
+            'data'   => $finalData->values()
+        ]);
+    }
+
     // Method untuk mendapatkan model yang benar berdasarkan request
     private function getUserModel(Request $request)
     {
