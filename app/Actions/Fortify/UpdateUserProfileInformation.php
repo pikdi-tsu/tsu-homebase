@@ -18,14 +18,11 @@ class UpdateUserProfileInformation implements UpdatesUserProfileInformation
      */
     public function update(UserDosenTendik $user, array $input): void
     {
-//        if (isset($input['photo'])) {
-//            dd($input['photo']);
-//            // Kalau file fisiknya GAK ADA atau ERROR, kita hapus dari $input
-//            // Supaya Validator tidak mencoba mengecek ukurannya (yg bikin crash)
-//            if ($input['photo']->getError() !== UPLOAD_ERR_OK || !file_exists($input['photo']->getRealPath())) {
-//                unset($input['photo']);
-//            }
-//        }
+        if (isset($input['photo'])) {
+            if ($input['photo']->getError() !== UPLOAD_ERR_OK || !file_exists($input['photo']->getRealPath())) {
+                unset($input['photo']);
+            }
+        }
 
         Validator::make($input, [
             'name' => ['required', 'string', 'max:255'],

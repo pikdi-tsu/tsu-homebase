@@ -228,37 +228,39 @@ class UserDosenTendikResource extends Resource
                     ->label('Role (Guard)')
                     ->placeholder('Tidak ada role')
                     ->badge()
+                    ->limitList(2)
+                    ->listWithLineBreaks()
+                    ->expandableLimitedList()
                     ->color('secondary')
-                    ->formatStateUsing(function ($state, Model $record) {
-                        return $record->roles->map(fn($role) => "{$role->name} ({$role->guard_name})")->implode(', ');
-                    })
                     ->searchable(),
                 TextColumn::make('permissions.name')
                     ->label('Izin Tambahan')
                     ->badge()
                     ->color('secondary')
                     ->placeholder('Tidak ada izin tambahan')
-                    ->color('success') // Beri warna berbeda agar mudah dibedakan dari roles
-                    ->listWithLineBreaks()
+                    ->color('success')
                     ->limitList(2)
+                    ->listWithLineBreaks()
                     ->expandableLimitedList()
                     ->searchable(),
-//                    ->tooltip(function (Model $record): string {
-//                        // Spatie 'permissions' relationship hanya mengambil direct permissions
-//                        return $record->permissions->pluck('name')->implode(', ');
-//                    }),
 
                 // ROLE SIAKAD & PMB LEGACY (Dari MasterGroup)
                 TextColumn::make('MasterGroup.NamaGroup')
                     ->label('Role Legacy')
                     ->placeholder('Tidak ada role')
                     ->badge()
+                    ->limitList(2)
+                    ->listWithLineBreaks()
+                    ->expandableLimitedList()
                     ->color('secondary')
                     ->searchable(),
                 TextColumn::make('MasterGroupPMB.NamaGroup')
                     ->label('Privilege PMB')
                     ->placeholder('Tidak ada role')
                     ->badge()
+                    ->limitList(2)
+                    ->listWithLineBreaks()
+                    ->expandableLimitedList()
                     ->color('secondary')
                     ->searchable(),
 

@@ -26,38 +26,52 @@ use App\Http\Controllers\Api\V1\SsoController;
 */
 
 // --- Endpoints Otentikasi (Publik) ---
-Route::prefix('v1/auth')->group(function () {
-    // Password Grant
-    Route::post('/login/dosen-tendik', [AuthController::class, 'loginDosenTendik']);
-    Route::post('/login/mahasiswa', [AuthController::class, 'loginMahasiswa']);
-    Route::post('/refresh', [AuthController::class, 'refreshToken']);
-//    Route::post('/password/send-link', [AuthController::class, 'sendResetLink']);
-//    Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+Route::prefix('v1')->group(function () {
 
-    // Endpoint logout harus dilindungi otentikasi
-    Route::middleware('auth:api,api2')->post('/logout', [AuthController::class, 'logout']);
-});
+    // API PUBLIK
+    Route::prefix('auth')->group(function () {
+        Route::post('/login/dosen-tendik', [AuthController::class, 'loginDosenTendik']);
+        Route::post('/login/mahasiswa', [AuthController::class, 'loginMahasiswa']);
+        Route::post('/refresh', [AuthController::class, 'refreshToken']);
+//        Route::post('/password/send-link', [AuthController::class, 'sendResetLink']);
+//        Route::post('/reset-password', [AuthController::class, 'resetPassword']);
+    });
 
+    // API USER (PERSONAL ACCESS)
+    Route::middleware(['auth:api, api2', LogSsoActivity::class])->group(function () {
+        // Auth Management
+        Route::post('/auth/logout', [AuthController::class, 'logout']);
+        Route::get('/me', [AuthController::class, 'getMe']);
 
-// --- Endpoints Profil (Untuk User yang Sudah Login) ---
-Route::middleware('auth:api,api2', LogSsoActivity::class)->prefix('v1')->group(function () {
-    Route::get('/me', [AuthController::class, 'getMe']);
-    Route::get('/profile', [UserProfileController::class, 'show']);
-    Route::put('/profile', [UserProfileController::class, 'update']);
-    Route::post('/profile/change-photo', [UserProfileController::class, 'updatePhoto']);
-    Route::post('/profile/change-password', [UserProfileController::class, 'changePassword']);
-});
+        // Profile Management
+        Route::prefix('profile')->group(function() {
+            Route::get('/', [UserProfileController::class, 'show']);
+            Route::put('/', [UserProfileController::class, 'update']);
+            Route::post('/change-photo', [UserProfileController::class, 'updatePhoto']);
+            Route::post('/change-password', [UserProfileController::class, 'changePassword']);
+        });
+    });
 
+    // API SERVER-TO-SERVER (CLIENT CREDENTIALS)
+    Route::middleware(['client'])->group(function () {
 
-// --- Endpoints Manajemen User (Untuk Antar Server/Modul) ---
-Route::middleware(['client', 'scopes:homebase:user-dosen-tendik:view-any,homebase:user-mahasiswa:view-any'])->prefix('v1')->group(function () {
-    // Anda bisa menambahkan 'scope:permission' di sini jika semua butuh permission yg sama
-    Route::apiResource('users', UserController::class);
+        // Sync Users
+        Route::get('users/sync', [UserController::class, 'getUsers']);
 
-    // --- Endpoints Manajemen Role dan Permission (Untuk Antar Server/Modul) ---
-    Route::apiResource('roles', RoleController::class);
-    Route::apiResource('permissions', PermissionController::class);
+        // Sync Roles (General Scope)
+        Route::get('roles/sync-list', [RoleController::class, 'syncList']);
 
-    // Endpoint otorisasi
-    Route::get('/users/{id}/permissions', [AuthorizationController::class, 'getUserPermissions']);
+        // Manajemen User & Permission (High Level Scope)
+        Route::middleware(['scopes:system:user:view'])->group(function () {
+            Route::apiResource('users', UserController::class);
+            Route::get('/users/{id}/permissions', [AuthorizationController::class, 'getUserPermissions']);
+        });
+
+        // Contoh: Group untuk manajemen Role/Permission secara CRUD (Admin Level)
+        Route::middleware(['scopes:system:role:create'])->group(function () {
+            Route::apiResource('roles', RoleController::class);
+            Route::apiResource('permissions', PermissionController::class);
+        });
+
+    });
 });
