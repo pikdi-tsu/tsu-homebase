@@ -87,7 +87,15 @@ class RoleController extends Controller
 
     public function syncList()
     {
-        $roles = Role::query()->pluck('name');
+        $roles = Role::query()
+            ->select('name', 'is_identity')
+            ->get()
+            ->map(function ($role) {
+                return [
+                    'name' => $role->name,
+                    'is_identity' => (bool) $role->is_identity
+                ];
+            });
 
         return response()->json([
             'meta' => [

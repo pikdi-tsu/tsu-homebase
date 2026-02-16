@@ -21,7 +21,7 @@ class ListRoles extends ListRecords
                 ->modalSubmitActionLabel('Simpan')
                 ->modalCancelActionLabel('Batal')
                 ->createAnotherAction(fn (Action $action) => $action->label('Simpan & Tambah Lagi'))
-                ->successNotificationTitle('Berhasil Menambahkan Role! 🎉'),
+                ->successNotificationTitle('Berhasil Menambahkan Role!'),
         ];
     }
 }

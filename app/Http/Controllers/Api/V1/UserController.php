@@ -19,12 +19,51 @@ class UserController extends Controller
             return response()->json(['message' => 'Unauthorized'], 403);
         }
 
+        $dosenQuery = UserDosenTendik::query()->where('isactive', 1);
+        $mhsQuery   = UserMahasiswa::query()->where('isactive', 1);
+
+        // Sync User Lokal Client
+        if ($request->has('emails') && is_array($request->emails)) {
+            $dosenQuery->whereIn('email', $request->emails);
+            $mhsQuery->whereIn('email', $request->emails);
+        }
+        // User Baru (Import Manual)
+        elseif ($request->has('q')) {
+            $keyword = $request->q;
+
+            $dosenQuery->where(function($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                    ->orWhere('username', 'like', "%$keyword%") // NIK
+                    ->orWhere('email', 'like', "%$keyword%");
+            });
+
+            $mhsQuery->where(function($q) use ($keyword) {
+                $q->where('name', 'like', "%$keyword%")
+                    ->orWhere('username', 'like', "%$keyword%") // NIM
+                    ->orWhere('email', 'like', "%$keyword%");
+            });
+
+            // Limit biar gak berat pas searching
+            $dosenQuery->limit(20);
+            $mhsQuery->limit(20);
+        } else {
+            return response()->json(['status' => 'error', 'message' => 'Harus kirim filter emails atau keyword pencarian (q).']);
+        }
+
+        $dosenResults = $dosenQuery->get();
+        $mhsResults   = $mhsQuery->get();
+
         // Ambil Dosen Tendik
-        $listDosenTendik = UserDosenTendik::query()->where('isactive', 1)->get();
-        $mappedDosen = $listDosenTendik->map(function ($row) {
-            $identityRole = (!empty($row->nidn) && $row->nidn !== '0') ? 'dosen' : 'tendik';
-            $spatieRoles = $row->getRoleNames()->toArray();
-            $allRoles = array_unique(array_merge([$identityRole], $spatieRoles));
+//        $listDosenTendik = UserDosenTendik::query()->where('isactive', 1)->get();
+        $mappedDosen = $dosenResults->map(function ($row) {
+            // Get roles user
+            $userRoles = $row->roles->map(function($role) {
+                return [
+                    'name' => $role->name,
+                    'is_identity' => (bool) $role->is_identity
+                ];
+            });
+
             return [
                 'id'                => $row->id,
                 'name'              => $row->name,
@@ -32,7 +71,7 @@ class UserController extends Controller
                 'email'             => $row->email,
                 'profile_photo_url' => $row->profile_photo_path,
                 'isactive'          => (bool) $row->isactive,
-                'roles'             => array_values($allRoles),
+                'roles'             => $userRoles,
                 'nidn'              => $row->nidn,
                 'nik'               => $row->username,
                 'unit'              => $row->unit,
@@ -40,11 +79,16 @@ class UserController extends Controller
         });
 
         // Ambil Mahasiswa
-        $listMhs = UserMahasiswa::query()->where('isactive', 1)->get();
-        $mappedMhs = $listMhs->map(function ($row) {
-            $identityRole = (!empty($row->nidn) && $row->nidn !== '0') ? 'dosen' : 'tendik';
-            $spatieRoles = $row->getRoleNames()->toArray();
-            $allRoles = array_unique(array_merge([$identityRole], $spatieRoles));
+//        $listMhs = UserMahasiswa::query()->where('isactive', 1)->get();
+        $mappedMhs = $mhsResults->map(function ($row) {
+            // Get roles user
+            $userRoles = $row->roles->map(function($role) {
+                return [
+                    'name' => $role->name,
+                    'is_identity' => (bool) $role->is_identity
+                ];
+            });
+
             return [
                 'id'                => $row->id,
                 'name'              => $row->name,
@@ -52,7 +96,7 @@ class UserController extends Controller
                 'email'             => $row->email,
                 'profile_photo_url' => $row->profile_photo_path,
                 'isactive'          => (bool) $row->isactive,
-                'roles'             => array_values($allRoles),
+                'roles'             => $userRoles,
                 'nim'               => (string) $row->username,
                 'unit'              => $row->unit,
             ];

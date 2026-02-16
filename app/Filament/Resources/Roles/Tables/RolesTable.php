@@ -7,6 +7,7 @@ use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Notifications\Notification;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Columns\ToggleColumn;
 use Filament\Tables\Columns\ViewColumn;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Collection;
@@ -35,6 +36,11 @@ class RolesTable
                     ->searchable(),
                 TextColumn::make('guard_name')
                     ->searchable(),
+                ToggleColumn::make('is_identity')
+                    ->label('Role Identitas (Global)')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->alignCenter(),
                 TextColumn::make('created_at')
                     ->dateTime('d M Y'),
             ])
