@@ -6,6 +6,7 @@ use App\Traits\GuardSelectable;
 use Filament\Forms\Components\CheckboxList;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
+use Filament\Forms\Components\Toggle;
 use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 use Illuminate\Database\Eloquent\Builder;
@@ -39,7 +40,14 @@ class RoleForm
                         'permissions',
                         'name',
                         fn (Builder $query, Get $get) => $query->where('guard_name', $get('guard_name'))
-                    ),
+                    )
+                    ->columnSpanFull(),
+                Toggle::make('is_identity')
+                    ->label('Role Identitas (Global)')
+                    ->onColor('success')
+                    ->offColor('danger')
+                    ->helperText('Aktifkan jika role ini adalah STATUS UTAMA User (Dosen, Mahasiswa, Tendik). Role ini akan memaksa sinkronisasi di semua aplikasi Client.')
+                    ->columnSpanFull(),
             ]);
     }
 }

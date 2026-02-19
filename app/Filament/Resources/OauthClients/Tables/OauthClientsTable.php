@@ -36,21 +36,19 @@ class OauthClientsTable
                     ->badge()
                     ->color('secondary'),
                 ToggleColumn::make('first_party')
-                    ->label('Auto Approve') // Label yang muncul di header
-                    ->onColor('success')    // Hijau kalau Aktif
-                    ->offColor('gray')      // Abu-abu kalau Mati
+                    ->label('Auto Approve')
+                    ->onColor('success')
+                    ->offColor('gray')
                     ->tooltip('Jika ON: User langsung login tanpa ditanya "Izinkan Aplikasi?"')
                     ->sortable()
                     ->disabled(function ($record) {
-                        // 1. Ambil data grant_types (karena bentuknya array/json)
-                        // Kita cast ke array biar aman kalau datanya string JSON
+                        // Ambil data grant_types
                         $grants = $record->grant_types;
                         if (is_string($grants)) {
                             $grants = json_decode($grants, true, 512, JSON_THROW_ON_ERROR) ?? [];
                         }
 
-                        // 2. Cek apakah ini Personal atau Password
-                        // (Pakai in_array karena isinya ["personal_access"] dsb)
+                        // Cek Personal atau Password
                         if (in_array('personal_access', $grants, true)) {
                             return true;
                         }
@@ -58,9 +56,7 @@ class OauthClientsTable
                             return true;
                         }
 
-                        // 3. Cek Redirect URI
-                        // Perhatikan: Nama kolom di DB kamu 'redirect_uris'
-                        // Kita cek attribute 'redirect_uris', kalau gak ada baru coba 'redirect'
+                        // Cek Redirect URI
                         $redirect = $record->redirect_uris ?? $record->redirect;
 
                         return blank($redirect);
@@ -100,8 +96,8 @@ class OauthClientsTable
                     ->label('Regenerate Secret')
                     ->color('danger')
                     ->icon('heroicon-o-arrow-path')
-                    ->color('danger') // Beri warna bahaya agar tidak sembarang diklik
-                    ->requiresConfirmation() // Minta konfirmasi
+                    ->color('danger')
+                    ->requiresConfirmation()
                     ->action(function (OauthCLient $record) {
                         $newSecret = Str::random(40);
                         $record->forceFill(['secret' => $newSecret])->save();

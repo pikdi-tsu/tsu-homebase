@@ -56,7 +56,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(['client'])->group(function () {
 
         // Sync Users
-        Route::get('users/sync', [UserController::class, 'getUsers']);
+        Route::match(['get', 'post'],'users/sync', [UserController::class, 'getUsers']);
 
         // Sync Roles (General Scope)
         Route::get('roles/sync-list', [RoleController::class, 'syncList']);
